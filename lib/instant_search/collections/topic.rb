@@ -1,0 +1,73 @@
+# frozen_string_literal: true
+
+module ::InstantSearch::Collections
+  class Topic < Base
+    def self.fields
+      [
+        { name: "id", type: "string", facet: false },
+        { name: "title", type: "string" },
+        { name: "user_id", type: "int32" },
+        { name: "author_username", type: "string", facet: true },
+        { name: "blurb", type: "string" },
+        { name: "reply_count", type: "int32" },
+        { name: "views", type: "int32" },
+        { name: "like_count", type: "int32" },
+        { name: "participants", type: "string[]", facet: true },
+        { name: "created_at", type: "int64" },
+        { name: "updated_at", type: "int64" },
+        { name: "category", type: "string", facet: true },
+        { name: "tags", type: "string[]", facet: true},
+        { name: "closed", type: "bool", facet: true},
+        { name: "security", type: "string[]" },
+        { name: "embeddings", type: "float[]", facet: false, num_dim: 1024 },
+      ]
+    end
+
+    def document
+      {
+        id: @object.id.to_s,
+        title: @object.title,
+        user_id: @object.user_id,
+        author_username: @object.user.username,
+        blurb: @object.first_post.raw.truncate(255),
+        reply_count: @object.posts_count - 1,
+        views: @object.views,
+        like_count: @object.like_count,
+        participants: @object.posters_summary.map(&:user).map(&:username),
+        created_at: @object.created_at.to_i,
+        updated_at: @object.updated_at.to_i,
+        category: @object.category.name,
+        tags: @object.tags.map(&:name),
+        closed: @object.closed,
+        security: security,
+        embeddings: embeddings,
+      }
+    end
+
+    def security
+      if @object.archetype == Archetype.regular
+        if @object.category.read_restricted?
+          @object.category.secure_group_ids.map { "g#{_1}" }
+        else
+          ["g0"]
+        end
+      elsif @object.archetype == Archetype.private_message
+        group_ids = @object.allowed_groups.pluck(:id).map { "g#{_1}" }
+        user_ids = @object.allowed_users.pluck(:id).map { "u#{_1}" }
+        group_ids + user_ids
+      end
+    end
+
+    def embeddings
+      JSON.parse(
+        DB
+          .query_single(
+            "SELECT embeddings FROM ai_topic_embeddings_4_1 WHERE topic_id = ? LIMIT 1",
+            @object.id,
+          )
+          .first
+          .presence || "[]",
+      )
+    end
+  end
+end

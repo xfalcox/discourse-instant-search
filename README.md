@@ -1,4 +1,4 @@
-# **Plugin Name** Plugin
+# **Discourse Instant Search** Plugin
 
 **Plugin Summary**
 
