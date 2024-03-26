@@ -15,9 +15,9 @@ module ::InstantSearch::Collections
         { name: "participants", type: "string[]", facet: true },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
-        { name: "category", type: "string", facet: true },
-        { name: "tags", type: "string[]", facet: true},
-        { name: "closed", type: "bool", facet: true},
+        { name: "category", type: "string", facet: true, optional: true },
+        { name: "tags", type: "string[]", facet: true },
+        { name: "closed", type: "bool", facet: true },
         { name: "security", type: "string[]" },
         { name: "embeddings", type: "float[]", facet: false, num_dim: 1024 },
       ]
@@ -36,7 +36,7 @@ module ::InstantSearch::Collections
         participants: @object.posters_summary.map(&:user).map(&:username),
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
-        category: @object.category.name,
+        category: @object&.category&.name,
         tags: @object.tags.map(&:name),
         closed: @object.closed,
         security: security,
@@ -45,16 +45,16 @@ module ::InstantSearch::Collections
     end
 
     def security
-      if @object.archetype == Archetype.regular
+      if @object.archetype == Archetype.private_message
+        group_ids = @object.allowed_groups.pluck(:id).map { "g#{_1}" }
+        user_ids = @object.allowed_users.pluck(:id).map { "u#{_1}" }
+        group_ids + user_ids
+      else
         if @object.category.read_restricted?
           @object.category.secure_group_ids.map { "g#{_1}" }
         else
           ["g0"]
         end
-      elsif @object.archetype == Archetype.private_message
-        group_ids = @object.allowed_groups.pluck(:id).map { "g#{_1}" }
-        user_ids = @object.allowed_users.pluck(:id).map { "u#{_1}" }
-        group_ids + user_ids
       end
     end
 

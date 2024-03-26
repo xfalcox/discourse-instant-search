@@ -6,15 +6,15 @@ module ::InstantSearch::Collections
       [
         { name: "id", type: "string", facet: false },
         { name: "channel_id", type: "int32" },
-        { name: "channel_name", type: "string" },
+        { name: "channel_name", type: "string", facet: true, optional: true },
         { name: "user_id", type: "int32" },
         { name: "author_username", type: "string", facet: true },
         { name: "raw", type: "string" },
         { name: "cooked", type: "string" },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
-        { name: "thread_id", type: "int32" },
-        { name: "thread_name", type: "string", facet: true },
+        { name: "thread_id", type: "int32", optional: true },
+        { name: "thread_name", type: "string", facet: true, optional: true },
         { name: "security", type: "string[]" },
       ]
     end
