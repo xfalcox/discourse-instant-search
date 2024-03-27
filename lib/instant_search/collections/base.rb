@@ -27,7 +27,7 @@ module ::InstantSearch::Collections
     end
 
     def self.collection
-      "le_#{self.class_name.demodulize.underscore.pluralize}"
+      self.class_name.demodulize.underscore.pluralize
     end
 
     def self.create_collection

@@ -7,7 +7,7 @@ module ::InstantSearch::Collections
         { name: "id", type: "string", facet: false },
         { name: "title", type: "string" },
         { name: "user_id", type: "int32" },
-        { name: "author_username", type: "string", facet: true },
+        { name: "author_username", type: "string", facet: true, optional: true },
         { name: "blurb", type: "string" },
         { name: "reply_count", type: "int32" },
         { name: "views", type: "int32" },
@@ -19,16 +19,16 @@ module ::InstantSearch::Collections
         { name: "tags", type: "string[]", facet: true },
         { name: "closed", type: "bool", facet: true },
         { name: "security", type: "string[]" },
-        { name: "embeddings", type: "float[]", facet: false, num_dim: 1024 },
+        { name: "embeddings", type: "float[]", facet: false, num_dim: 1024, optional: true },
       ]
     end
 
     def document
-      {
+      doc = {
         id: @object.id.to_s,
         title: @object.title,
         user_id: @object.user_id,
-        author_username: @object.user.username,
+        author_username: @object&.user&.username,
         blurb: @object.first_post.raw.truncate(255),
         reply_count: @object.posts_count - 1,
         views: @object.views,
@@ -40,8 +40,10 @@ module ::InstantSearch::Collections
         tags: @object.tags.map(&:name),
         closed: @object.closed,
         security: security,
-        embeddings: embeddings,
       }
+
+      doc[:embeddings] = embeddings if JSON.parse(embeddings).size > 1
+      doc
     end
 
     def security
@@ -66,7 +68,7 @@ module ::InstantSearch::Collections
             @object.id,
           )
           .first
-          .presence || "[]",
+          .presence || [],
       )
     end
   end

@@ -8,7 +8,7 @@ module ::InstantSearch::Collections
         { name: "topic_id", type: "int32" },
         { name: "topic_title", type: "string" },
         { name: "user_id", type: "int32" },
-        { name: "author_username", type: "string", facet: true },
+        { name: "author_username", type: "string", facet: true, optional: true },
         { name: "raw", type: "string" },
         { name: "cooked", type: "string" },
         { name: "created_at", type: "int64" },
@@ -16,17 +16,17 @@ module ::InstantSearch::Collections
         { name: "category", type: "string", facet: true, optional: true },
         { name: "tags", type: "string[]", facet: true },
         { name: "security", type: "string[]" },
-        { name: "embeddings", type: "float[]", facet: false, num_dim: 1024 },
+        { name: "embeddings", type: "float[]", facet: false, num_dim: 1024, optional: true },
       ]
     end
 
     def document
-      {
+      doc = {
         id: @object.id.to_s,
         topic_id: @object.topic_id,
         topic_title: @object.topic.title,
         user_id: @object.user_id,
-        author_username: @object.user.username,
+        author_username: @object&.user&.username,
         raw: @object.raw,
         cooked: @object.cooked,
         created_at: @object.created_at.to_i,
@@ -34,8 +34,10 @@ module ::InstantSearch::Collections
         category: @object.topic&.category&.name,
         tags: @object.topic.tags.map(&:name),
         security: security,
-        embeddings: embeddings,
       }
+
+      doc[:embeddings] = embeddings if JSON.parse(embeddings).size > 1
+      doc
     end
 
     def security
