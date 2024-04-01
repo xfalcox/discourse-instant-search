@@ -41,6 +41,8 @@ module ::InstantSearch::Collections
     end
 
     def security
+      return SiteSetting.whispers_allowed_groups_map.map { "g#{_1}" } if @object.whisper?
+
       if @object.topic.archetype == Archetype.private_message
         group_ids = @object.topic.allowed_groups.pluck(:id).map { "g#{_1}" }
         user_ids = @object.topic.allowed_users.pluck(:id).map { "u#{_1}" }
