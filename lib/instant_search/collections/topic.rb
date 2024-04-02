@@ -49,7 +49,7 @@ module ::InstantSearch::Collections
     def security
       if @object.archetype == Archetype.private_message
         group_ids = @object.allowed_groups.pluck(:id).map { "g#{_1}" }
-        user_ids = @object.allowed_users.pluck(:id).map { "u#{_1}" }
+        user_ids = @object.allowed_users.pluck(:id).filter { _1 > 0 }.map { "u#{_1}" }
         group_ids + user_ids
       else
         if @object.category.read_restricted?

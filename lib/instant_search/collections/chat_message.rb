@@ -38,7 +38,12 @@ module ::InstantSearch::Collections
 
     def security
       if @object.chat_channel.class == Chat::DirectMessageChannel
-        @object.chat_channel.user_chat_channel_memberships.pluck(:user_id).map { "u#{_1}" }
+        @object
+          .chat_channel
+          .user_chat_channel_memberships
+          .pluck(:user_id)
+          .filter { _1 > 0 }
+          .map { "u#{_1}" }
       else
         category = @object.chat_channel.chatable
 
