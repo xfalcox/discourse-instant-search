@@ -22,6 +22,4 @@ Rails.autoloaders.main.push_dir(File.join(__dir__, "lib"), namespace: ::InstantS
 
 require_relative "lib/instant_search/engine"
 
-after_initialize do
-  # Code which should run after Rails has finished booting
-end
+after_initialize { InstantSearch::EventHandler.setup(self) }

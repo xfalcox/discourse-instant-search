@@ -6,8 +6,16 @@ module ::InstantSearch::Collections
       @object = object
     end
 
+    def self.model
+      self.class_name.constantize
+    end
+
     def create
-      self.class.engine.collections[self.class.collection].documents.create(document)
+      self.class.engine.collections[self.class.collection].documents.upsert(document)
+    end
+
+    def delete
+      self.class.engine.collections[self.class.collection].documents[@object.id.to_s].delete
     end
 
     def document

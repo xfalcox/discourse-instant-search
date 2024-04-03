@@ -7,19 +7,15 @@ module Jobs
     def execute(args)
       id = args[:id]
       type = args[:type]
-      object = type.constantize.find_by(id: id)
+      object = type.constantize.model.find_by(id: id)
 
       return unless object.present?
 
-      case type
-      when "User"
-        ::InstantSearch::Collections::User.new(object).create
-      when "Topic"
-        ::InstantSearch::Collections::Topic.new(object).create
-      when "Post"
-        ::InstantSearch::Collections::Post.new(object).create
-      when "Chat::Message"
-        ::InstantSearch::Collections::ChatMessage.new(object).create
+      case args[:action]
+      when "upsert"
+        type.constantize.new(object).create
+      when "delete"
+        type.constantize.new(object).delete
       end
     end
   end

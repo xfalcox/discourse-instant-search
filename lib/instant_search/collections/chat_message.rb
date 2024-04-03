@@ -2,6 +2,10 @@
 
 module ::InstantSearch::Collections
   class ChatMessage < Base
+    def self.model
+      Chat::Message
+    end
+
     def self.fields
       [
         { name: "id", type: "string", facet: false },

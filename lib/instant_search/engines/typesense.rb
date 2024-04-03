@@ -4,11 +4,10 @@ module ::InstantSearch
   module Engines
     class Typesense
       def self.client
-        @client ||=
-          ::Typesense::Client.new(
-            api_key: "xyz",
-            nodes: [{ host: "localhost", port: "8108", protocol: "http" }],
-          )
+        ::Typesense::Client.new(
+          api_key: SiteSetting.typesense_api_key,
+          nodes: JSON.parse(SiteSetting.typesense_nodes, symbolize_names: true),
+        )
       end
 
       def self.create_search_api_key

@@ -2,3 +2,10 @@ discourse_instant_search:
   instant_search_enabled:
     default: true
     client: true
+  typesense_nodes:
+    client: true
+    default: '[{ "host": "localhost", "port": 8108, "protocol": "http"}]'
+    json_schema: InstantSearch::SiteSettings::TypesenseNodesJsonSchema
+  typesense_api_key:
+    client: false
+    default: ""
