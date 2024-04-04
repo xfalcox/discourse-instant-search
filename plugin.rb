@@ -18,8 +18,6 @@ module ::InstantSearch
   INSTANT_SEARCH = "discourse-instant-search"
 end
 
-Rails.autoloaders.main.push_dir(File.join(__dir__, "lib"), namespace: ::InstantSearch)
-
 require_relative "lib/instant_search/engine"
 
 after_initialize { InstantSearch::EventHandler.setup(self) }
