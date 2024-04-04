@@ -23,7 +23,16 @@ task "instant_search:index" => [:environment] do
 end
 
 task "instant_search:eager_load" => [:environment] do
-  Zeitwerk::Loader.eager_load_all
+  #Zeitwerk::Loader.eager_load_all
+
+  # TODO This is a hack to force eager loading of all classes
+  # We should find a better way to do this
+  # see unresolved https://github.com/rails/rails/issues/37006
+  require "instant_search/collections/base"
+  require "instant_search/collections/topic"
+  require "instant_search/collections/post"
+  require "instant_search/collections/user"
+  require "instant_search/collections/chat_message"
 end
 
 task "instant_search:prepare" => "instant_search:eager_load"
