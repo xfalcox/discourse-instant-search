@@ -12,11 +12,12 @@ task "instant_search:index" => [:environment] do
   InstantSearch::Collections::Base.subclasses.each do |collection|
     puts "### Indexing #{collection.class_name}"
     i = 0
+    total = collection.model.count
     collection.model.find_in_batches do |batch|
       batch.each do |object|
         Jobs.enqueue(:index, id: object.id, action: "upsert", type: collection.class_name)
       end
-      puts "### Indexed #{i = i + batch.size} of #{collection.class_name}"
+      puts "### Indexed #{i = i + batch.size} of #{collection.class_name} (#{i * 100 / total}%)"
     end
   end
 end
