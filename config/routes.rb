@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 InstantSearch::Engine.routes.draw do
-  get "/examples" => "examples#index"
+  get "/instant-search" => "searches#index"
   # define routes here
 end
 
