@@ -1,0 +1,120 @@
+.d-input {
+  select {
+    padding: 0.5rem;
+    border-radius: var(--d-input-border-radius);
+    border-color: var(--primary-400);
+  }
+}
+
+.instant-search-container {
+  .instant-search-box-container {
+    flex: 1;
+  }
+
+  .ais-SearchBox-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+}
+
+.ais-Searchform {
+  gap: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .search-query {
+    width: 100%;
+  }
+}
+
+.ais-SearchBox-reset {
+  padding: 0.6em 0.6em;
+
+  &[hidden] {
+    visibility: hidden;
+  }
+}
+
+.instant-search-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-flow: row wrap;
+}
+
+.instant-search-refinements {
+  // padding: 1rem;
+  // border: 1px solid var(--primary-400);
+  margin-top: 1rem;
+
+  gap: 1rem;
+  display: flex;
+
+  .refinement-list-container {
+    flex: 1;
+  }
+
+  .refinement-list {
+    padding: 1rem;
+    background: var(--primary-200);
+    border-radius: var(--d-input-border-radius);
+    flex: 1;
+  }
+
+  .ais-SearchBox-form {
+    display: flex;
+    justify-content: stretch;
+    position: relative;
+
+    .ais-SearchBox-input {
+      margin-bottom: 0;
+      width: 100%;
+    }
+
+    .ais-SearchBox-submit {
+      display: none;
+    }
+
+    .ais-SearchBox-reset {
+      position: absolute;
+      right: 0;
+      background: none;
+      .d-icon {
+        color: var(--primary-00);
+      }
+    }
+    .ais-SearchBox-submit,
+    .ais-SearchBox-reset {
+      padding: 0.6em 0.6em;
+    }
+  }
+
+  .ais-RefinementList-list {
+    margin-left: 0;
+  }
+
+  .ais-RefinementList-item {
+    list-style: none;
+  }
+
+  .ais-RefinementList-label {
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+  }
+
+  .ais-RefinementList-count {
+    font-size: var(--font-down-1);
+    margin-left: auto;
+    background: var(--tertiary-low);
+    padding: 5px;
+    border-radius: 8px;
+    color: var(--tertiary);
+  }
+
+  .ais-RefinementList-noResults {
+    padding: 1rem;
+  }
+}

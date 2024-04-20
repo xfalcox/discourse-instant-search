@@ -1,1 +1,30 @@
-<h1>Instant Search</h1>
+{{#if this.instantSearchModule}}
+  <this.instantSearch.AisInstantSearch
+    @apiData={{this.apiData}}
+    @middleware={{this.customMiddleware}}
+    @onStateChange={{this.onStateChange}}
+    @collectionSpecificSearchParameters={{this.searchParameters}}
+    as |Ais|
+  >
+    <section class="search-container instant-search-container">
+      <SearchHeader
+        @instantSearch={{this.instantSearch}}
+        @searchInstance={{Ais.searchInstance}}
+      />
+
+      <div class="search-advanced">
+        <div class="search-info" role="region">
+
+        </div>
+
+        <SearchResults
+          @instantSearch={{this.instantSearch}}
+          @searchInstance={{Ais.searchInstance}}
+          @searchType={{this.searchType}}
+        />
+      </div>
+    </section>
+  </this.instantSearch.AisInstantSearch>
+{{else}}
+  Loading instantsearch...
+{{/if}}

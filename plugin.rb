@@ -14,6 +14,8 @@ gem "typesense", "1.0.0"
 
 enabled_site_setting :instant_search_enabled
 
+register_asset "stylesheets/instant-search.scss"
+
 module ::InstantSearch
   INSTANT_SEARCH = "discourse-instant-search"
 end
