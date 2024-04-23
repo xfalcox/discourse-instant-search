@@ -7,6 +7,8 @@ export default class InstantSearch extends Controller {
   @service siteSettings;
   @tracked instantSearchModule;
   @tracked searchType = "topics";
+  @tracked query = "";
+  @tracked apiKey = this.model.api_key;
 
   constructor() {
     super(...arguments);
@@ -20,6 +22,10 @@ export default class InstantSearch extends Controller {
         onStateChange({ uiState }) {
           const { topics } = uiState;
           const { sortBy } = topics;
+
+          if (topics?.query) {
+            context.query = topics.query;
+          }
 
           switch (sortBy) {
             case "posts":
@@ -68,9 +74,8 @@ export default class InstantSearch extends Controller {
     };
     const typesenseNodes = JSON.parse(this.siteSettings.typesense_nodes);
 
-    // TODO get API key from the server side
     return {
-      apiKey: "key",
+      apiKey: this.apiKey,
       port: typesenseNodes[0].port,
       host: typesenseNodes[0].host,
       protocol: typesenseNodes[0].protocol,

@@ -3,7 +3,7 @@ en:
     admin:
       site_settings:
         categories:
-          TODO_instant_search: "Plugin Name"
+          discourse_instant_search: "Instant Search"
   js:
     discourse_instant_search:
       placeholder: placeholder

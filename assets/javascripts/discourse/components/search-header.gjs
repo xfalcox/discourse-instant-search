@@ -88,6 +88,7 @@ export default class SearchHeader extends Component {
       <div class="search-bar">
         <@instantSearch.AisSearchBox
           @placeholder={{i18n "search.title"}}
+          @autofocus={{true}}
           @searchInstance={{@searchInstance}}
           @cssClasses={{this.searchBoxClasses}}
           @templates={{this.searchBoxTemplate}}

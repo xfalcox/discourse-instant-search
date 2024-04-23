@@ -1,1 +1,5 @@
 en:
+  site_settings:
+    instant_search_enabled: "Enable the InstantSearch plugin"
+    typesense_nodes: "API nodes for Typesense"
+    typesense_api_key: "API key for Typesense"
