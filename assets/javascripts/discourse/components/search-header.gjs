@@ -83,7 +83,7 @@ export default class SearchHeader extends Component {
   <template>
     <div class="search-header" role="search">
       <h1 class="search-page-heading">
-        <@instantSearch.AisStats @searchInstance={{this.args.searchInstance}} />
+        <@instantSearch.AisStats @searchInstance={{@searchInstance}} />
       </h1>
       <div class="search-bar">
         <@instantSearch.AisSearchBox

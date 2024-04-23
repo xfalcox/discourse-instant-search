@@ -1,7 +1,7 @@
 import { tracked } from "@glimmer/tracking";
 import Controller from "@ember/controller";
-import loadInstantSearch from "discourse/lib/load-instant-search";
 import { inject as service } from "@ember/service";
+import loadInstantSearch from "discourse/lib/load-instant-search";
 
 export default class InstantSearch extends Controller {
   @service siteSettings;
