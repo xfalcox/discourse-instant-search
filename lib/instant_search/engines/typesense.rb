@@ -17,7 +17,7 @@ module ::InstantSearch
               {
                 "description" => "Search-only Discourse key.",
                 "actions" => ["documents:search"],
-                "collections" => ::InstantSearch::Collections::Base.subclasses.map(&:collection),
+                "collections" => %w[posts topics chat_messages users],
               },
             )[
               "value"
