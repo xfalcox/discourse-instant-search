@@ -11,6 +11,7 @@ discourse_instant_search:
     default: ""
   typesense_read_only_key:
     client: false
+    hidden: true
     default: ""
   include_embeddings: false
   index_private_content: false
