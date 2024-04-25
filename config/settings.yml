@@ -9,3 +9,8 @@ discourse_instant_search:
   typesense_api_key:
     client: false
     default: ""
+  typesense_read_only_key:
+    client: false
+    default: ""
+  include_embeddings: false
+  index_private_content: false

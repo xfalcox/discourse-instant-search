@@ -1,28 +1,39 @@
 # frozen_string_literal: true
 
 task "instant_search:prepare" => [:environment] do
+  load!
   InstantSearch::Collections::Base.subclasses.each { |collection| collection.create_collection }
 end
 
 task "instant_search:destroy" => [:environment] do
+  load!
   InstantSearch::Collections::Base.subclasses.each { |collection| collection.destroy_collection }
 end
 
-task "instant_search:index" => [:environment] do
+task "instant_search:index", %i[concurrency] => [:environment] do |_, args|
+  load!
   InstantSearch::Collections::Base.subclasses.each do |collection|
     puts "### Indexing #{collection.class_name}"
     i = 0
     total = collection.model.count
-    collection.model.find_in_batches do |batch|
-      batch.each do |object|
-        Jobs.enqueue(:index, id: object.id, action: "upsert", type: collection.class_name)
-      end
-      puts "### Indexed #{i = i + batch.size} of #{collection.class_name} (#{i * 100 / total}%)"
+    queue = SizedQueue.new(50)
+    Thread.new do
+      collection.model.find_in_batches { |batch| batch.each { |object| queue.push object } }
+      queue.push Parallel::Stop
     end
+
+    Parallel.each(-> { queue.pop }, in_processes: args[:concurrency].to_i) do |item|
+      ActiveRecord::Base.connection_pool.with_connection do
+        collection.new(item).create
+        i += 1
+        print "### Indexed #{i * 100 * args[:concurrency].to_i / total}% of #{collection.class_name}          \r"
+      end
+    end
+    puts "### Indexed #{collection.class_name} done                      "
   end
 end
 
-task "instant_search:eager_load" => [:environment] do
+def load!
   #Zeitwerk::Loader.eager_load_all
 
   # TODO This is a hack to force eager loading of all classes
@@ -34,7 +45,3 @@ task "instant_search:eager_load" => [:environment] do
   require "instant_search/collections/user"
   require "instant_search/collections/chat_message"
 end
-
-task "instant_search:prepare" => "instant_search:eager_load"
-task "instant_search:destroy" => "instant_search:eager_load"
-task "instant_search:index" => "instant_search:eager_load"

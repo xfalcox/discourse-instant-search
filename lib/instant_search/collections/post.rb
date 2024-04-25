@@ -3,21 +3,31 @@
 module ::InstantSearch::Collections
   class Post < Base
     def self.fields
-      [
+      fields = [
         { name: "id", type: "string", facet: false },
         { name: "topic_id", type: "int32" },
         { name: "topic_title", type: "string" },
         { name: "user_id", type: "int32" },
         { name: "author_username", type: "string", facet: true, optional: true },
-        { name: "raw", type: "string" },
         { name: "cooked", type: "string" },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
         { name: "category", type: "string", facet: true, optional: true },
         { name: "tags", type: "string[]", facet: true },
         { name: "security", type: "string[]" },
-        { name: "embeddings", type: "float[]", facet: false, num_dim: 1024, optional: true },
       ]
+
+      if SiteSetting.include_embeddings
+        fields << {
+          name: "embeddings",
+          type: "float[]",
+          facet: false,
+          num_dim: 1024,
+          optional: true,
+        }
+      end
+
+      fields
     end
 
     def document
@@ -27,7 +37,6 @@ module ::InstantSearch::Collections
         topic_title: @object.topic.title,
         user_id: @object.user_id,
         author_username: @object&.user&.username,
-        raw: @object.raw,
         cooked: @object.cooked,
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
@@ -36,8 +45,16 @@ module ::InstantSearch::Collections
         security: security,
       }
 
-      doc[:embeddings] = embeddings if JSON.parse(embeddings).size > 1
+      doc[:embeddings] = embeddings if embeddings.size > 1
       doc
+    end
+
+    def should_index?
+      return true if SiteSetting.index_private_content
+      return false if @object&.topic&.category&.read_restricted?
+      return false if @object&.topic&.archetype == Archetype.private_message
+      return false if @object.whisper?
+      true
     end
 
     def security
@@ -57,6 +74,7 @@ module ::InstantSearch::Collections
     end
 
     def embeddings
+      return [] unless SiteSetting.include_embeddings
       JSON.parse(
         DB
           .query_single(

@@ -11,7 +11,9 @@ module ::InstantSearch::Collections
     end
 
     def create
-      self.class.engine.collections[self.class.collection].documents.upsert(document)
+      if should_index?
+        self.class.engine.collections[self.class.collection].documents.upsert(document)
+      end
     end
 
     def delete

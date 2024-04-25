@@ -13,7 +13,6 @@ module ::InstantSearch::Collections
         { name: "channel_name", type: "string", facet: true, optional: true },
         { name: "user_id", type: "int32" },
         { name: "author_username", type: "string", facet: true },
-        { name: "raw", type: "string" },
         { name: "cooked", type: "string" },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
@@ -30,7 +29,6 @@ module ::InstantSearch::Collections
         channel_name: @object.chat_channel.name,
         user_id: @object.user_id,
         author_username: @object.user.username,
-        raw: @object.message,
         cooked: @object.cooked,
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
@@ -38,6 +36,13 @@ module ::InstantSearch::Collections
         thread_name: @object.thread&.name,
         security: security,
       }
+    end
+
+    def should_index?
+      return true if SiteSetting.index_private_content
+      return false if @object.chat_channel.class == Chat::DirectMessageChannel
+      return false if @object.chat_channel.chatable.read_restricted?
+      true
     end
 
     def security

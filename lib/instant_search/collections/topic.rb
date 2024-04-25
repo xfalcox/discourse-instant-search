@@ -3,7 +3,7 @@
 module ::InstantSearch::Collections
   class Topic < Base
     def self.fields
-      [
+      fields = [
         { name: "id", type: "string", facet: false },
         { name: "title", type: "string" },
         { name: "user_id", type: "int32" },
@@ -19,8 +19,26 @@ module ::InstantSearch::Collections
         { name: "tags", type: "string[]", facet: true },
         { name: "closed", type: "bool", facet: true },
         { name: "security", type: "string[]" },
-        { name: "embeddings", type: "float[]", facet: false, num_dim: 1024, optional: true },
       ]
+
+      if SiteSetting.include_embeddings
+        fields << {
+          name: "embeddings",
+          type: "float[]",
+          facet: false,
+          num_dim: 1024,
+          optional: true,
+        }
+      end
+
+      fields
+    end
+
+    def should_index?
+      return true if SiteSetting.index_private_content
+      return false if @object&.category&.read_restricted?
+      return false if @object.archetype == Archetype.private_message
+      true
     end
 
     def document
@@ -42,7 +60,7 @@ module ::InstantSearch::Collections
         security: security,
       }
 
-      doc[:embeddings] = embeddings if JSON.parse(embeddings).size > 1
+      doc[:embeddings] = embeddings if embeddings.size > 1
       doc
     end
 
@@ -61,6 +79,7 @@ module ::InstantSearch::Collections
     end
 
     def embeddings
+      return [] unless SiteSetting.include_embeddings
       JSON.parse(
         DB
           .query_single(

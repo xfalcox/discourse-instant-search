@@ -22,6 +22,10 @@ module ::InstantSearch::Collections
       ]
     end
 
+    def should_index?
+      true
+    end
+
     def document
       {
         id: @object.id.to_s,

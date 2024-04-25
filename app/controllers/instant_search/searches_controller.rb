@@ -13,8 +13,7 @@ module ::InstantSearch
     private
 
     def fetch_user_api_key(user)
-      # TODO: logic to fetch user search api key
-      "xyz"
+      ::InstantSearch::Engines::Typesense.user_scoped_search_key(user)
     end
   end
 end
