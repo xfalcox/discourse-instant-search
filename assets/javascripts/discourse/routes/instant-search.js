@@ -11,6 +11,6 @@ export default DiscourseRoute.extend({
   },
 
   model() {
-    return ajax("/instant-search");
+    return ajax("/instant-search/key");
   },
 });

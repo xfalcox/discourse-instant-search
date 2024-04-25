@@ -5,6 +5,10 @@ module ::InstantSearch
     requires_plugin INSTANT_SEARCH
 
     def index
+      render json: {}
+    end
+
+    def api_key
       api_key = fetch_user_api_key(current_user)
 
       render json: { api_key: api_key }

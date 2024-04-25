@@ -2,6 +2,7 @@
 
 InstantSearch::Engine.routes.draw do
   get "/" => "searches#index"
+  get "/key" => "searches#api_key"
   # define routes here
 end
 
