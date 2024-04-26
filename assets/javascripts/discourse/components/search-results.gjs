@@ -36,7 +36,7 @@ export default class SearchResults extends Component {
     const category = hit.category ? this.buildCategoryHTML(hit.category) : "";
 
     const highlightedTitle = hit._highlightResult.title.value || hit.title;
-    const title = this.buildTitleHTML(highlightedTitle, hit.topic_id);
+    const title = this.buildTitleHTML(highlightedTitle, hit.id);
 
     const highlightedBlurb = hit._highlightResult.blurb.value || hit.blurb;
     const content = this.buildContentHTML(highlightedBlurb);
@@ -58,7 +58,10 @@ export default class SearchResults extends Component {
   postsHitTemplate(hit) {
     const highlightedTitle =
       hit._highlightResult.topic_title?.value || hit.topic_title;
-    const title = this.buildTitleHTML(highlightedTitle, hit.topic_id);
+    const title = this.buildTitleHTML(
+      highlightedTitle,
+      `${hit.topic_id}/${hit.id}`
+    );
 
     const highlightedContent =
       hit._highlightedResult?.cooked?.value || hit?.cooked;
