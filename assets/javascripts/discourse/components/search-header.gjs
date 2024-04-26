@@ -23,7 +23,7 @@ export default class SearchHeader extends Component {
       { label: "Topics", value: "topics" },
       { label: "Posts", value: "posts" },
       { label: "Chat Messages", value: "chat_messages" },
-      { label: "Users", value: "users" },
+      // { label: "Users", value: "users" },
     ];
   }
 

@@ -33,7 +33,10 @@ export default class SearchResults extends Component {
   topicsHitTemplate(hit) {
     const author = this.buildAuthorHTML(hit.author_username);
     const date = this.buildDateHTML(hit.created_at);
-    const category = hit.category ? this.buildCategoryHTML(hit.category) : "";
+    const category =
+      hit.category && hit.tags
+        ? this.buildCategoryHTML(hit.category, hit.tags)
+        : "";
 
     const highlightedTitle = hit._highlightResult.title.value || hit.title;
     const title = this.buildTitleHTML(highlightedTitle, `/t/${hit.id}`);
@@ -59,16 +62,19 @@ export default class SearchResults extends Component {
     const highlightedTitle =
       hit._highlightResult.topic_title?.value || hit.topic_title;
     const title = this.buildTitleHTML(highlightedTitle, `/p/${hit.id}`);
-    const highlightedContent =
-      hit._highlightedResult?.cooked?.value || hit?.cooked;
-    const content = hit.cooked ? this.buildContentHTML(highlightedContent) : "";
-
+    const snippetContent = hit._snippetResult?.raw?.value || hit?.raw;
+    const content = hit.raw ? this.buildContentHTML(snippetContent) : "";
+    const category =
+      hit.category && hit.tags
+        ? this.buildCategoryHTML(hit.category, hit.tags)
+        : "";
     const author = this.buildAuthorHTML(hit.author_username);
     const date = this.buildDateHTML(hit.created_at);
     return `
           ${author}
           <div class="fps-topic">
             ${title}
+            ${category}
             <div class="blurb container">
             ${date}
             ${content}
@@ -169,7 +175,24 @@ export default class SearchResults extends Component {
       `;
   }
 
-  buildCategoryHTML(category) {
+  buildTagsHTML(tags) {
+    const tagsHTML = [];
+    tags.forEach((tag) => {
+      tagsHTML.push(
+        `<a href="/tags/${tag}" class="discourse-tag simple" data-tag-name="${tag}">${tag}</a>`
+      );
+    });
+
+    const tagsWrapper = `
+      <div class="discourse-tags" role="list" aria-label="Tags">
+        ${tagsHTML.join("")}
+      </div>
+    `;
+
+    return tagsWrapper;
+  }
+
+  buildCategoryHTML(category, tags) {
     // TODO: Get proper category id and category badge color.
     return `
       <div class="search-category">
@@ -178,6 +201,7 @@ export default class SearchResults extends Component {
             <span class="badge-category__name">${category}</span>
           </span>
         </a>
+        ${this.buildTagsHTML(tags)}
       </div>`;
   }
 

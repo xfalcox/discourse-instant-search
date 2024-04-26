@@ -53,7 +53,7 @@ export default class InstantSearch extends Controller {
   get apiData() {
     let indexes = {
       posts: {
-        query_by: "topic_title,cooked",
+        query_by: "topic_title,raw",
         query_by_weights: "2,1",
         exclude_fields: "embeddings",
         facet_by: "author_username,category,tags",
@@ -68,7 +68,7 @@ export default class InstantSearch extends Controller {
         facet_by: "groups",
       },
       chat_messages: {
-        query_by: "cooked",
+        query_by: "raw",
         facet_by: "author_username,channel_name",
       },
     };
@@ -87,7 +87,7 @@ export default class InstantSearch extends Controller {
   get searchParameters() {
     return {
       posts: {
-        query_by: "topic_title,cooked",
+        query_by: "topic_title,raw",
         query_by_weights: "2,1",
         exclude_fields: "embeddings",
         facet_by: "author_username,category,tags",
