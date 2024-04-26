@@ -19,6 +19,7 @@ module ::InstantSearch::Collections
         { name: "badges", type: "string[]" },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
+        { name: "security", type: "string[]" },
       ]
     end
 
@@ -43,6 +44,7 @@ module ::InstantSearch::Collections
         badges: @object.badges.map(&:name),
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
+        security: ["g0"],
       }
     end
   end

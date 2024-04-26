@@ -9,7 +9,7 @@ module ::InstantSearch::Collections
         { name: "topic_title", type: "string" },
         { name: "user_id", type: "int32" },
         { name: "author_username", type: "string", facet: true, optional: true },
-        { name: "cooked", type: "string" },
+        { name: "raw", type: "string" },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
         { name: "category", type: "string", facet: true, optional: true },
@@ -37,7 +37,7 @@ module ::InstantSearch::Collections
         topic_title: @object.topic.title,
         user_id: @object.user_id,
         author_username: @object&.user&.username,
-        cooked: @object.cooked,
+        raw: @object.raw,
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
         category: @object.topic&.category&.name,
@@ -50,6 +50,9 @@ module ::InstantSearch::Collections
     end
 
     def should_index?
+      return false if @object.deleted_at.present?
+      return false unless @object.topic.present?
+      return false unless @object.topic.category.present?
       return true if SiteSetting.index_private_content
       return false if @object&.topic&.category&.read_restricted?
       return false if @object&.topic&.archetype == Archetype.private_message
