@@ -97,12 +97,6 @@ export default class SearchHeader extends Component {
         />
 
         <div class="instant-search-filters">
-          <@instantSearch.AisHitsPerPage
-            @searchInstance={{@searchInstance}}
-            @items={{this.hitsPerPageItems}}
-            @cssClasses={{hash root="hits-per-page d-input"}}
-          />
-
           <@instantSearch.AisSortBy
             @searchInstance={{@searchInstance}}
             @items={{this.searchTypes}}
