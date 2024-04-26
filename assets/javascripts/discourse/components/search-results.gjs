@@ -36,7 +36,7 @@ export default class SearchResults extends Component {
     const category = hit.category ? this.buildCategoryHTML(hit.category) : "";
 
     const highlightedTitle = hit._highlightResult.title.value || hit.title;
-    const title = this.buildTitleHTML(highlightedTitle, hit.id);
+    const title = this.buildTitleHTML(highlightedTitle, `/t/${hit.id}`);
 
     const highlightedBlurb = hit._highlightResult.blurb.value || hit.blurb;
     const content = this.buildContentHTML(highlightedBlurb);
@@ -58,11 +58,7 @@ export default class SearchResults extends Component {
   postsHitTemplate(hit) {
     const highlightedTitle =
       hit._highlightResult.topic_title?.value || hit.topic_title;
-    const title = this.buildTitleHTML(
-      highlightedTitle,
-      `${hit.topic_id}/${hit.id}`
-    );
-
+    const title = this.buildTitleHTML(highlightedTitle, `/p/${hit.id}`);
     const highlightedContent =
       hit._highlightedResult?.cooked?.value || hit?.cooked;
     const content = hit.cooked ? this.buildContentHTML(highlightedContent) : "";
@@ -141,10 +137,10 @@ export default class SearchResults extends Component {
      `;
   }
 
-  buildTitleHTML(title, id) {
+  buildTitleHTML(title, url) {
     return `
       <div class="topic">
-        <a href="/t/${id}" class="search-link" role="heading">
+        <a href="${url}" class="search-link" role="heading">
           <span class="topic-title">
             ${title}
           </span>
