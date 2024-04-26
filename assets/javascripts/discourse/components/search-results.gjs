@@ -183,7 +183,7 @@ export default class SearchResults extends Component {
   }
 
   <template>
-    <div class="search-results" role="region">
+    <div class="search-results --{{this.args.searchType}}" role="region">
       <@instantSearch.AisInfiniteHits
         @searchInstance={{@searchInstance}}
         @templates={{this.customHitTemplate}}

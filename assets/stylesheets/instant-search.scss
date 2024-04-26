@@ -1,3 +1,110 @@
+.instant-search-container {
+  .search-bar {
+    display: grid;
+    grid-template-areas: "input filters submit";
+    grid-template-columns: 1fr auto auto auto;
+    margin-right: -0.5em; // fixes gap issue due to reordering
+    gap: 0.5em;
+    margin-bottom: 1em;
+    @include breakpoint("tablet") {
+      grid-template-areas: "input input" "filters submit";
+    }
+
+    .instant-search-box-container,
+    .ais-SearchBox,
+    .ais-SearchBox-form {
+      display: contents; // prepares layout for grid by flattening structure
+    }
+
+    .ais-SearchBox-input {
+      grid-area: input;
+      padding-right: 2.15em; // avoid cancel overlap
+    }
+    .instant-search-filters {
+      grid-area: filters;
+      @include breakpoint("tablet") {
+        div,
+        select {
+          width: 100%;
+        }
+      }
+    }
+    .ais-SearchBox-submit {
+      grid-area: submit;
+    }
+    .ais-SearchBox-reset {
+      grid-area: input;
+      justify-self: end;
+      background: transparent;
+      .discourse-no-touch & {
+        &:hover,
+        &:focus {
+          .d-icon {
+            color: var(--primary);
+          }
+        }
+      }
+    }
+  }
+
+  .search-header {
+    padding: 2em 10% 2.5em;
+  }
+
+  .instant-search-filters {
+    display: flex;
+
+    select {
+      margin: 0;
+      width: unset;
+      appearance: none;
+      min-width: 10em;
+      padding-right: 2.15em; // avoid pseudo element overlap
+    }
+    .inline-form {
+      position: relative;
+      &:before {
+        // chevron-down icon
+        position: absolute;
+        display: block;
+        content: "";
+        width: 0.9em;
+        height: 1em;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M201.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 306.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/></svg>');
+        background-size: contain;
+        background-repeat: no-repeat;
+        right: 0.75em;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .search-results {
+    .fps-result-entries {
+      margin: 0;
+    }
+
+    &.--users {
+      .fps-result-entries {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
+        gap: 1.25em 1em;
+        margin: 1em 0 2em 0;
+      }
+
+      .fps-result {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+
+  .ais-InfiniteHits--empty {
+    margin-top: 1em;
+    font-size: var(--font-up-2);
+  }
+}
+
 .d-input {
   select {
     padding: 0.5rem;
@@ -34,32 +141,22 @@
   padding: 0.6em 0.6em;
 
   &[hidden] {
-    visibility: hidden;
+    display: none;
   }
-}
-
-.instant-search-filters {
-  display: flex;
-  gap: 0.5rem;
-  flex-flow: row wrap;
 }
 
 .instant-search-refinements {
-  // padding: 1rem;
-  // border: 1px solid var(--primary-400);
-  margin-top: 1rem;
-
+  margin-top: 2em;
   gap: 1rem;
   display: flex;
+  flex-wrap: wrap;
 
   .refinement-list-container {
     flex: 1;
+    min-width: 15em;
   }
 
   .refinement-list {
-    padding: 1rem;
-    background: var(--primary-200);
-    border-radius: var(--d-input-border-radius);
     flex: 1;
   }
 
@@ -71,6 +168,8 @@
     .ais-SearchBox-input {
       margin-bottom: 0;
       width: 100%;
+      border-radius: var(--d-input-border-radius) var(--d-input-border-radius) 0
+        0;
     }
 
     .ais-SearchBox-submit {
@@ -92,11 +191,20 @@
   }
 
   .ais-RefinementList-list {
-    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 0.75em 0.75em 1em;
+    margin: 0;
+    border: 1px solid var(--primary-400);
+    border-top: none;
   }
 
   .ais-RefinementList-item {
     list-style: none;
+    label {
+      margin: 0;
+    }
   }
 
   .ais-RefinementList-label {
@@ -108,10 +216,10 @@
   .ais-RefinementList-count {
     font-size: var(--font-down-1);
     margin-left: auto;
-    background: var(--tertiary-low);
-    padding: 5px;
+    background: var(--primary-200);
+    padding: 0.2em 0.45em;
     border-radius: 8px;
-    color: var(--tertiary);
+    color: var(--primary-700);
   }
 
   .ais-RefinementList-noResults {
