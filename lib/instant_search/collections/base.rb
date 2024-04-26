@@ -7,7 +7,7 @@ module ::InstantSearch::Collections
     end
 
     def self.model
-      self.class_name.constantize
+      self.name.demodulize.constantize
     end
 
     def create
@@ -37,7 +37,7 @@ module ::InstantSearch::Collections
     end
 
     def self.collection
-      self.class_name.demodulize.underscore.pluralize
+      self.name.demodulize.underscore.pluralize
     end
 
     def self.create_collection
