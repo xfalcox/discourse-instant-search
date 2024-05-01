@@ -24,7 +24,7 @@
       grid-area: filters;
       @include breakpoint("tablet") {
         div,
-        select {
+        .search-types {
           width: 100%;
         }
       }
@@ -54,28 +54,9 @@
   .instant-search-filters {
     display: flex;
 
-    select {
+    .search-types {
       margin: 0;
-      width: unset;
-      appearance: none;
       min-width: 10em;
-      padding-right: 2.15em; // avoid pseudo element overlap
-    }
-    .inline-form {
-      position: relative;
-      &:before {
-        // chevron-down icon
-        position: absolute;
-        display: block;
-        content: "";
-        width: 0.9em;
-        height: 1em;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M201.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 306.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/></svg>');
-        background-size: contain;
-        background-repeat: no-repeat;
-        right: 0.75em;
-        pointer-events: none;
-      }
     }
   }
 
@@ -102,14 +83,6 @@
   .ais-InfiniteHits--empty {
     margin-top: 1em;
     font-size: var(--font-up-2);
-  }
-}
-
-.d-input {
-  select {
-    padding: 0.5rem;
-    border-radius: var(--d-input-border-radius);
-    border-color: var(--primary-400);
   }
 }
 

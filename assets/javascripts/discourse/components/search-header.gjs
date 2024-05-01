@@ -1,6 +1,5 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { hash } from "@ember/helper";
 import { action } from "@ember/object";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse-common/helpers/i18n";
@@ -97,11 +96,7 @@ export default class SearchHeader extends Component {
         />
 
         <div class="instant-search-filters">
-          <@instantSearch.AisSortBy
-            @searchInstance={{@searchInstance}}
-            @items={{this.searchTypes}}
-            @cssClasses={{hash root="sort-by inline-form d-input"}}
-          />
+          {{yield to="sortBy"}}
         </div>
       </div>
 

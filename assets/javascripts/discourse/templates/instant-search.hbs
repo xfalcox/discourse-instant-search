@@ -1,26 +1,52 @@
-{{#if this.instantSearchModule}}
-  <this.instantSearch.AisInstantSearch
+{{#if (eq this.searchType "topics")}}
+  <SearchContainer
     @apiData={{this.apiData}}
-    @middleware={{this.customMiddleware}}
-    @onStateChange={{this.onStateChange}}
-    @collectionSpecificSearchParameters={{this.searchParameters}}
-    as |Ais|
+    @instantSearch={{this.instantSearch}}
+    @searchType={{this.searchType}}
+    @searchParameters={{this.searchParameters}}
+    @updateQuery={{this.updateQuery}}
   >
-    <section class="search-container instant-search-container">
-      <SearchHeader
-        @instantSearch={{this.instantSearch}}
-        @searchInstance={{Ais.searchInstance}}
+    <:sortBy>
+      <ComboBox
+        class="search-types"
+        @valueProperty="value"
+        @content={{this.searchTypes}}
+        @value={{this.searchType}}
       />
-
-      <div class="search-advanced">
-        <SearchResults
-          @instantSearch={{this.instantSearch}}
-          @searchInstance={{Ais.searchInstance}}
-          @searchType={{this.searchType}}
-        />
-      </div>
-    </section>
-  </this.instantSearch.AisInstantSearch>
-{{else}}
-  Loading instantsearch...
+    </:sortBy>
+  </SearchContainer>
+{{else if (eq this.searchType "posts")}}
+  <SearchContainer
+    @apiData={{this.apiData}}
+    @instantSearch={{this.instantSearch}}
+    @searchType={{this.searchType}}
+    @searchParameters={{this.searchParameters}}
+    @updateQuery={{this.updateQuery}}
+  >
+    <:sortBy>
+      <ComboBox
+        class="search-types"
+        @valueProperty="value"
+        @content={{this.searchTypes}}
+        @value={{this.searchType}}
+      />
+    </:sortBy>
+  </SearchContainer>
+{{else if (eq this.searchType "chat_messages")}}
+  <SearchContainer
+    @apiData={{this.apiData}}
+    @instantSearch={{this.instantSearch}}
+    @searchType={{this.searchType}}
+    @searchParameters={{this.searchParameters}}
+    @updateQuery={{this.updateQuery}}
+  >
+    <:sortBy>
+      <ComboBox
+        class="search-types"
+        @valueProperty="value"
+        @content={{this.searchTypes}}
+        @value={{this.searchType}}
+      />
+    </:sortBy>
+  </SearchContainer>
 {{/if}}
