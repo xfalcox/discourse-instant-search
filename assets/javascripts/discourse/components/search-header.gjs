@@ -80,6 +80,27 @@ export default class SearchHeader extends Component {
     };
   }
 
+  get showCategoryRefinementList() {
+    return (
+      this.args.searchType === "topics" || this.args.searchType === "posts"
+    );
+  }
+
+  get showUserRefinementList() {
+    return (
+      this.args.searchType === "topics" ||
+      this.args.searchType === "posts" ||
+      this.args.searchType === "chat_messages" ||
+      this.args.searchType === "users"
+    );
+  }
+
+  get showTagRefinementList() {
+    return (
+      this.args.searchType === "topics" || this.args.searchType === "posts"
+    );
+  }
+
   @action
   toggleAdvancedFilters() {
     this.showAdvancedFilters = !this.showAdvancedFilters;
@@ -114,26 +135,42 @@ export default class SearchHeader extends Component {
 
       {{#if this.showAdvancedFilters}}
         <div class="instant-search-refinements">
-          <@instantSearch.AisRefinementList
-            @searchInstance={{@searchInstance}}
-            @attribute="category"
-            @showMore={{false}}
-            @searchable={{true}}
-            @searchablePlaceholder="Search for categories"
-            @cssClasses={{this.refinementListClasses}}
-            @templates={{this.refinementListTemplate}}
-            @rootClass="refinement-list-container"
-          />
-          <@instantSearch.AisRefinementList
-            @searchInstance={{@searchInstance}}
-            @attribute="author_username"
-            @showMore={{false}}
-            @searchable={{true}}
-            @searchablePlaceholder="Search for users"
-            @cssClasses={{this.refinementListClasses}}
-            @templates={{this.refinementListTemplate}}
-            @rootClass="refinement-list-container"
-          />
+          {{#if this.showCategoryRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="category"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for categories"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container"
+            />
+          {{/if}}
+          {{#if this.showUserRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="author_username"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for users"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container"
+            />
+          {{/if}}
+          {{#if this.showTagRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="tags"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for tags"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container"
+            />
+          {{/if}}
         </div>
       {{/if}}
 

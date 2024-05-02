@@ -57,7 +57,7 @@ export default class InstantSearch extends Controller {
       topics: {
         query_by: "title,blurb",
         exclude_fields: "embeddings",
-        facet_by: "author_username,category",
+        facet_by: "author_username,category,tags",
       },
       users: {
         query_by: "username,name",

@@ -34,6 +34,7 @@ export default class SearchContainer extends Component {
           @instantSearch={{@instantSearch}}
           @searchInstance={{Ais.searchInstance}}
           @query={{@query}}
+          @searchType={{@searchType}}
         >
           <:sortBy>
             {{yield to="sortBy"}}
