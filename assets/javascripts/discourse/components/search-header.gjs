@@ -1,6 +1,7 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
+import { modifier } from "ember-modifier";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse-common/helpers/i18n";
 import { iconHTML } from "discourse-common/lib/icon-library";
@@ -8,6 +9,11 @@ import I18n from "discourse-i18n";
 
 export default class SearchHeader extends Component {
   @tracked showAdvancedFilters = false;
+
+  prefillQuery = modifier(() => {
+    // Should keep previous query when switching sort modes:
+    this.args.searchInstance.helper.setQuery(this.args.query).search();
+  });
 
   get searchBoxClasses() {
     return {
@@ -84,7 +90,7 @@ export default class SearchHeader extends Component {
       <h1 class="search-page-heading">
         <@instantSearch.AisStats @searchInstance={{@searchInstance}} />
       </h1>
-      <div class="search-bar">
+      <div class="search-bar" {{this.prefillQuery}}>
         <@instantSearch.AisSearchBox
           @placeholder={{i18n "search.title"}}
           @autofocus={{true}}

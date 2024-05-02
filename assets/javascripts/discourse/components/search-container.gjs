@@ -10,9 +10,10 @@ export default class SearchContainer extends Component {
         onStateChange({ uiState }) {
           const searchType = context.args.searchType;
           const currentSearchType = uiState[searchType];
-
           if (currentSearchType?.query) {
             context.args.updateQuery(currentSearchType.query);
+          } else {
+            context.args.updateQuery("");
           }
         },
         subscribe() {},
@@ -32,6 +33,7 @@ export default class SearchContainer extends Component {
         <SearchHeader
           @instantSearch={{@instantSearch}}
           @searchInstance={{Ais.searchInstance}}
+          @query={{@query}}
         >
           <:sortBy>
             {{yield to="sortBy"}}
