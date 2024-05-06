@@ -88,15 +88,17 @@ export default class SearchResults extends Component {
     const highlightedtitle =
       hit._highlightResult?.author_username?.value || hit.author_username;
     const title = this.buildUsernameTitle(highlightedtitle);
+    const category = this.buildCategoryHTML(hit.channel_name, []);
     const date = this.buildDateHTML(hit.created_at);
     const highlightedContent =
-      hit._highlightedResult?.cooked?.value || hit?.cooked;
-    const content = hit.cooked ? this.buildContentHTML(highlightedContent) : "";
+      hit._highlightResult?.raw?.value || hit?.raw;
+    const content = hit.raw ? this.buildContentHTML(highlightedContent) : "";
 
     return `
       ${authorHTML}
       <div class="fps-topic">
         ${title}
+        ${category}
         <div class="blurb container">
         ${date}
         ${content}

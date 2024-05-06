@@ -23,15 +23,6 @@ export default class SearchHeader extends Component {
     };
   }
 
-  get searchTypes() {
-    return [
-      { label: "Topics", value: "topics" },
-      { label: "Posts", value: "posts" },
-      { label: "Chat Messages", value: "chat_messages" },
-      // { label: "Users", value: "users" },
-    ];
-  }
-
   get searchBoxTemplate() {
     return {
       // eslint-disable-next-line no-unused-vars
@@ -90,8 +81,7 @@ export default class SearchHeader extends Component {
     return (
       this.args.searchType === "topics" ||
       this.args.searchType === "posts" ||
-      this.args.searchType === "chat_messages" ||
-      this.args.searchType === "users"
+      this.args.searchType === "chat_messages"
     );
   }
 
@@ -99,6 +89,14 @@ export default class SearchHeader extends Component {
     return (
       this.args.searchType === "topics" || this.args.searchType === "posts"
     );
+  }
+
+  get showTrustRefinementList() {
+    return this.args.searchType === "users";
+  }
+
+  get showGroupRefinementList() {
+    return this.args.searchType === "users";
   }
 
   @action
@@ -171,9 +169,32 @@ export default class SearchHeader extends Component {
               @rootClass="refinement-list-container"
             />
           {{/if}}
+          {{#if this.showTrustRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="trust_level"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for Trust Levels"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container"
+            />
+          {{/if}}
+          {{#if this.showGroupRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="groups"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for Groups"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container"
+            />
+          {{/if}}
         </div>
       {{/if}}
-
     </div>
   </template>
 }

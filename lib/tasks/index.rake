@@ -16,19 +16,30 @@ task "instant_search:index", %i[concurrency] => [:environment] do |_, args|
     puts "### Indexing #{collection.name}"
     i = 0
     total = collection.model.count
-    queue = SizedQueue.new(20)
+    queue = SizedQueue.new(50)
+    concurrency = args[:concurrency].to_i
+    end_object = Object.new
+
     Thread.new do
       collection.model.find_in_batches { |batch| batch.each { |object| queue.push object } }
-      queue.push Parallel::Stop
+      concurrency.times { queue.push end_object }
     end
 
-    Parallel.each(-> { queue.pop }, in_processes: args[:concurrency].to_i) do |item|
-      ActiveRecord::Base.connection_pool.with_connection do
-        collection.new(item).create
-        i += 1
-        print "### Indexed #{i * 100 * args[:concurrency].to_i / total}% of #{collection.name}          \r"
+    consumers =
+      concurrency.times.map do
+        Thread.new do
+          until (item = queue.pop) == end_object
+            ActiveRecord::Base.connection_pool.with_connection do
+              collection.new(item).create
+              i += 1
+              print "### Indexed #{i * 100 / total}% of #{collection.name}          \r"
+            end
+          end
+        end
       end
-    end
+
+    consumers.each(&:join)
+
     puts "### Indexed #{collection.name} done                      "
   end
 end

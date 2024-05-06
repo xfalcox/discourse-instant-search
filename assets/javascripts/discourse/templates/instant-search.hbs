@@ -52,4 +52,22 @@
       />
     </:sortBy>
   </SearchContainer>
+{{else if (eq this.searchType "users")}}
+  <SearchContainer
+    @apiData={{this.apiData}}
+    @instantSearch={{this.instantSearch}}
+    @searchType={{this.searchType}}
+    @searchParameters={{this.searchParameters}}
+    @updateQuery={{this.updateQuery}}
+    @query={{this.query}}
+  >
+    <:sortBy>
+      <ComboBox
+        class="search-types"
+        @valueProperty="value"
+        @content={{this.searchTypes}}
+        @value={{this.searchType}}
+      />
+    </:sortBy>
+  </SearchContainer>
 {{/if}}

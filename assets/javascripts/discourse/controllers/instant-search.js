@@ -10,6 +10,7 @@ export default class InstantSearch extends Controller {
   @tracked searchType = this.searchTypes[0].value;
   @tracked query = "";
   @tracked apiKey = this.model.api_key;
+  @tracked categoryWeights = this.model.categories;
 
   constructor() {
     super(...arguments);
@@ -30,10 +31,15 @@ export default class InstantSearch extends Controller {
         label: "Chat Messages",
         value: "chat_messages",
       },
+      {
+        label: "Users",
+        value: "users",
+      },
     ];
   }
 
   get apiData() {
+    let indexes = this.searchParameters;
     const typesenseNodes = JSON.parse(this.siteSettings.typesense_nodes);
 
     return {
@@ -53,18 +59,21 @@ export default class InstantSearch extends Controller {
         query_by_weights: "2,1",
         exclude_fields: "embeddings",
         facet_by: "author_username,category,tags",
+        sort_by: `_text_match(buckets: 20):desc,${this.categoryWeights}`,
       },
       topics: {
         query_by: "title,blurb",
         exclude_fields: "embeddings",
         facet_by: "author_username,category,tags",
+        sort_by: `_text_match(buckets: 10):desc,${this.categoryWeights}`,
       },
       users: {
         query_by: "username,name",
-        facet_by: "groups",
+        facet_by: "trust_level,groups",
+        sort_by: "_text_match:desc,trust_level:desc,likes_received:desc",
       },
       chat_messages: {
-        query_by: "cooked",
+        query_by: "raw",
         facet_by: "author_username,channel_name",
       },
     };
