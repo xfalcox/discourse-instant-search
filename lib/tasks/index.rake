@@ -19,9 +19,17 @@ task "instant_search:index", %i[concurrency] => [:environment] do |_, args|
     queue = SizedQueue.new(50)
     concurrency = args[:concurrency].to_i
     end_object = Object.new
+    client = InstantSearch::Engines::Typesense.client
+    lowest_hits =
+      client.collections[collection.collection].documents.search(
+        { q: "*", sort_by: "created_at:asc" },
+      )
+    lowest_id = lowest_hits.dig("hits", 0, "document", "id")
 
     Thread.new do
-      collection.model.find_in_batches { |batch| batch.each { |object| queue.push object } }
+      col = collection.model
+      col = col.where("id < ?", lowest_id) if lowest_id.present?
+      col.find_in_batches(order: :desc) { |batch| batch.each { |object| queue.push object } }
       concurrency.times { queue.push end_object }
     end
 
