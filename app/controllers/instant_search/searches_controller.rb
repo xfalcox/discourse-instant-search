@@ -48,6 +48,39 @@ module ::InstantSearch
       render json: { api_key: api_key, categories: typesense_category_eval }
     end
 
+    def embeddings
+      params.require(%i[search_query hyde])
+
+      search_query = params[:search_query]
+
+      if search_query.blank?
+        render json: { embeddings: [] }
+        return
+      end
+
+      digest = OpenSSL::Digest::SHA1.hexdigest(search_query + params[:hyde].to_s)
+
+      embeddings =
+        Discourse
+          .cache
+          .fetch("instant-search-embeddings-#{digest}", expires_in: 1.second) do
+            if params[:hyde]
+              search_query =
+                DiscourseAi::Embeddings::SemanticSearch.new(
+                  Guardian.new(current_user),
+                ).hypothetical_post_from(search_query)
+            end
+
+            strategy = DiscourseAi::Embeddings::Strategies::Truncation.new
+            vector_rep =
+              DiscourseAi::Embeddings::VectorRepresentations::Base.current_representation(strategy)
+
+            vector_rep.vector_from(search_query)
+          end
+
+      render json: { embeddings: embeddings }
+    end
+
     private
 
     def fetch_user_api_key(user)
