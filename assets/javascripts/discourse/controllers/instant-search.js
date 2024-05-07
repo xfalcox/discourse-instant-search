@@ -20,12 +20,12 @@ export default class InstantSearch extends Controller {
   get searchTypes() {
     return [
       {
-        label: "Topics",
-        value: "topics",
-      },
-      {
         label: "Posts",
         value: "posts",
+      },
+      {
+        label: "Topics",
+        value: "topics",
       },
       {
         label: "Chat Messages",
