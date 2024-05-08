@@ -13,6 +13,9 @@ module ::InstantSearch::Collections
         { name: "views", type: "int32" },
         { name: "like_count", type: "int32" },
         { name: "participants", type: "string[]", facet: true },
+        { name: "type", type: "string", facet: true },
+        { name: "allowed_users", type: "string[]", facet: true, optional: true },
+        { name: "allowed_groups", type: "string[]", facet: true, optional: true },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
         { name: "category_id", type: "int32", optional: true },
@@ -37,7 +40,6 @@ module ::InstantSearch::Collections
 
     def should_index?
       return false if @object.deleted_at.present?
-      return false unless @object.category.present?
 
       return true if SiteSetting.index_private_content
       return false if @object&.category&.read_restricted?
@@ -56,6 +58,9 @@ module ::InstantSearch::Collections
         views: @object.views,
         like_count: @object.like_count,
         participants: @object.posters_summary.map(&:user).map(&:username),
+        type: type,
+        allowed_users: @object.allowed_users.pluck(:name),
+        allowed_groups: @object.allowed_groups.pluck(:name),
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
         category_id: @object&.category&.id,
@@ -81,6 +86,10 @@ module ::InstantSearch::Collections
           ["g0"]
         end
       end
+    end
+
+    def type
+      @object.archetype
     end
 
     def embeddings

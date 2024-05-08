@@ -10,6 +10,9 @@ module ::InstantSearch::Collections
         { name: "user_id", type: "int32" },
         { name: "author_username", type: "string", facet: true, optional: true },
         { name: "raw", type: "string" },
+        { name: "type", type: "string", facet: true },
+        { name: "allowed_users", type: "string[]", facet: true, optional: true },
+        { name: "allowed_groups", type: "string[]", facet: true, optional: true },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
         { name: "category_id", type: "int32", optional: true },
@@ -39,6 +42,9 @@ module ::InstantSearch::Collections
         user_id: @object.user_id,
         author_username: @object&.user&.username,
         raw: @object.raw,
+        type: type,
+        allowed_users: @object.topic.allowed_users.pluck(:id).map(&:to_s),
+        allowed_groups: @object.topic.allowed_groups.pluck(:id).map(&:to_s),
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
         category_id: @object.topic&.category&.id,
@@ -54,7 +60,7 @@ module ::InstantSearch::Collections
     def should_index?
       return false if @object.deleted_at.present?
       return false unless @object.topic.present?
-      return false unless @object.topic.category.present?
+      
       return true if SiteSetting.index_private_content
       return false if @object&.topic&.category&.read_restricted?
       return false if @object&.topic&.archetype == Archetype.private_message
@@ -76,6 +82,10 @@ module ::InstantSearch::Collections
           ["g0"]
         end
       end
+    end
+
+    def type
+      @object.topic.archetype
     end
 
     def embeddings
