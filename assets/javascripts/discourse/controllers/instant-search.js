@@ -43,16 +43,29 @@ export default class InstantSearch extends Controller {
 
   get apiData() {
     let indexes = this.searchParameters;
-    const typesenseNodes = JSON.parse(this.siteSettings.typesense_nodes);
 
-    return {
-      apiKey: this.apiKey,
-      port: typesenseNodes[0].port,
-      host: typesenseNodes[0].host,
-      protocol: typesenseNodes[0].protocol,
-      indexName: this.searchType,
-      queryBy: this.searchParameters[this.searchType].query_by,
-    };
+    if (!this.siteSettings.proxy_typesense_requests) {
+      const typesenseNodes = JSON.parse(this.siteSettings.typesense_nodes);
+
+      return {
+        apiKey: this.apiKey,
+        port: typesenseNodes[0].port,
+        host: typesenseNodes[0].host,
+        protocol: typesenseNodes[0].protocol,
+        indexName: this.searchType,
+        queryBy: this.searchParameters[this.searchType].query_by,
+      };
+    } else {
+      return {
+        apiKey: this.apiKey,
+        path: "/typesense",
+        port: window.location.port || 443,
+        host: window.location.hostname,
+        protocol: window.location.protocol.replace(":", ""),
+        indexName: this.searchType,
+        queryBy: indexes[this.searchType].query_by,
+      };
+    }
   }
 
   get searchParameters() {
@@ -92,7 +105,7 @@ export default class InstantSearch extends Controller {
 
   @action
   async updateQuery(newQuery) {
-    if (this.searchMode !== "aaaa") {
+    if (this.searchMode !== "keyword") {
       this.embeddings = await ajax('/instant-search/embeddings', {
         type: 'POST',
         data: JSON.stringify({
