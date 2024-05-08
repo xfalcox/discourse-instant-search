@@ -90,8 +90,7 @@ export default class SearchResults extends Component {
     const title = this.buildUsernameTitle(highlightedtitle);
     const category = this.buildCategoryHTML(hit.channel_name, []);
     const date = this.buildDateHTML(hit.created_at);
-    const highlightedContent =
-      hit._highlightResult?.raw?.value || hit?.raw;
+    const highlightedContent = hit._highlightResult?.raw?.value || hit?.raw;
     const content = hit.raw ? this.buildContentHTML(highlightedContent) : "";
 
     return `

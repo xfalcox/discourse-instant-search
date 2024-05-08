@@ -199,3 +199,12 @@
     padding: 1rem;
   }
 }
+
+.instant-search-modes__container {
+  background: var(--primary-very-low);
+  padding: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  align-items: center;
+}

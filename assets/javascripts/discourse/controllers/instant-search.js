@@ -1,8 +1,8 @@
-import { ajax } from "discourse/lib/ajax";
 import { tracked } from "@glimmer/tracking";
 import Controller from "@ember/controller";
 import { action } from "@ember/object";
 import { inject as service } from "@ember/service";
+import { ajax } from "discourse/lib/ajax";
 import loadInstantSearch from "discourse/lib/load-instant-search";
 
 export default class InstantSearch extends Controller {
@@ -11,7 +11,7 @@ export default class InstantSearch extends Controller {
   @tracked searchType = this.searchTypes[0].value;
   @tracked query = "";
   @tracked embeddings = [];
-  @tracked searchMode = "keyword"; // keyword, semantic, hybrid or hyde
+  @tracked searchMode = "keyword";
   @tracked apiKey = this.model.api_key;
   @tracked categoryWeights = this.model.categories;
 
@@ -37,6 +37,27 @@ export default class InstantSearch extends Controller {
       {
         label: "Users",
         value: "users",
+      },
+    ];
+  }
+
+  get searchModes() {
+    return [
+      {
+        label: "Keyword Search",
+        value: "keyword",
+      },
+      {
+        label: "Semantic Search",
+        value: "semantic",
+      },
+      {
+        label: "Hybrid Search",
+        value: "hybrid",
+      },
+      {
+        label: "Hyde Search",
+        value: "hyde",
       },
     ];
   }
@@ -105,22 +126,6 @@ export default class InstantSearch extends Controller {
 
   @action
   async updateQuery(newQuery) {
-    if (this.searchMode !== "keyword") {
-      this.embeddings = await ajax('/instant-search/embeddings', {
-        type: 'POST',
-        data: JSON.stringify({
-          search_query: newQuery,
-          hyde: this.searchMode === 'hyde'
-        }),
-        contentType: 'application/json'
-      }).then((response) => {
-        return response.embeddings;
-      });
-    }
-    // Update the query_by according to the searchMode here
-    // semantic should be like https://typesense.org/docs/26.0/api/vector-search.html#nearest-neighbor-vector-search
-    // hybrid should set both q and vector query
-    // hyde should set vector query only
     this.query = newQuery;
   }
 }

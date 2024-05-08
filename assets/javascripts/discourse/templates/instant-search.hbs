@@ -1,3 +1,11 @@
+<div class="instant-search-modes__container">
+  <ComboBox
+    class="instant-search-modes__input"
+    @valueProperty="value"
+    @content={{this.searchModes}}
+    @value={{this.searchMode}}
+  />
+</div>
 {{#if (eq this.searchType "topics")}}
   <SearchContainer
     @apiData={{this.apiData}}
@@ -6,6 +14,7 @@
     @searchParameters={{this.searchParameters}}
     @updateQuery={{this.updateQuery}}
     @query={{this.query}}
+    @searchMode={{this.searchMode}}
   >
     <:sortBy>
       <ComboBox
@@ -24,6 +33,7 @@
     @searchParameters={{this.searchParameters}}
     @updateQuery={{this.updateQuery}}
     @query={{this.query}}
+    @searchMode={{this.searchMode}}
   >
     <:sortBy>
       <ComboBox
@@ -42,6 +52,7 @@
     @searchParameters={{this.searchParameters}}
     @updateQuery={{this.updateQuery}}
     @query={{this.query}}
+    @searchMode={{this.searchMode}}
   >
     <:sortBy>
       <ComboBox
@@ -60,6 +71,7 @@
     @searchParameters={{this.searchParameters}}
     @updateQuery={{this.updateQuery}}
     @query={{this.query}}
+    @searchMode={{this.searchMode}}
   >
     <:sortBy>
       <ComboBox
