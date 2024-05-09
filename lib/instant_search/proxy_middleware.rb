@@ -31,7 +31,9 @@ class InstantSearch::ProxyMiddleware
     req["Content-Type"] = "application/json"
     # Not needed as users have their scoped API keys
     #req["X-TYPESENSE-API-KEY"] = SiteSetting.instant_search_api_key
-    res = Net::HTTP.start(uri.hostname, uri.port) { |http| http.request(req) }
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = uri.scheme == "https"
+    res = http.request(req)
 
     # tell me why
     headers = res.to_hash.transform_values(&:first)
