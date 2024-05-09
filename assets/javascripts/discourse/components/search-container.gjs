@@ -1,5 +1,5 @@
 import Component from "@glimmer/component";
-import { tracked } from '@glimmer/tracking';
+import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import { bind } from "discourse-common/utils/decorators";
 import SearchHeader from "./search-header";
@@ -7,12 +7,14 @@ import SearchResults from "./search-results";
 
 export default class SearchContainer extends Component {
   @tracked noLoop = false;
+  @tracked uiState = null;
 
   get customMiddleware() {
     const context = this;
     return [
       () => ({
         onStateChange({ uiState }) {
+          context.uiState = uiState;
           const searchType = context.args.searchType;
           const currentSearchType = uiState[searchType];
           if (currentSearchType?.query) {
@@ -56,11 +58,14 @@ export default class SearchContainer extends Component {
       return response.embeddings;
     });
 
-    if (this.args.searchMode === "semantic" || this.args.searchMode === "hyde") {
+    if (
+      this.args.searchMode === "semantic" ||
+      this.args.searchMode === "hyde"
+    ) {
       helper
         .setQueryParameter(
           "typesenseVectorQuery",
-          `embeddings:([${embeddings.join(",")}], k:1000)`,
+          `embeddings:([${embeddings.join(",")}], k:1000)`
         )
         .setQueryParameter("query", "*")
         .setPage(page)
@@ -70,13 +75,12 @@ export default class SearchContainer extends Component {
       helper
         .setQueryParameter(
           "typesenseVectorQuery",
-          `embeddings:([${embeddings.join(",")}], k:1000)`,
+          `embeddings:([${embeddings.join(",")}], k:1000)`
         )
         .setPage(page)
         .search();
     }
   }
-
 
   <template>
     <@instantSearch.AisInstantSearch
@@ -92,6 +96,7 @@ export default class SearchContainer extends Component {
           @searchInstance={{Ais.searchInstance}}
           @query={{@query}}
           @searchType={{@searchType}}
+          @uiState={{this.uiState}}
         >
           <:sortBy>
             {{yield to="sortBy"}}

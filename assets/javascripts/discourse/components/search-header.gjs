@@ -44,6 +44,22 @@ export default class SearchHeader extends Component {
     };
   }
 
+  get currentRefinements() {
+    const { refinementList } = this.args.uiState[this.args.searchType];
+    if (!refinementList) {
+      return "";
+    }
+    const currentRefinements = [];
+
+    for (const [key, values] of Object.entries(refinementList)) {
+      values.forEach((value) => {
+        currentRefinements.push(`ref-${key}-${value}`);
+      });
+    }
+
+    return currentRefinements.join(", ");
+  }
+
   get hitsPerPageItems() {
     return [
       { label: "6 per page", value: 6, default: true },
@@ -71,7 +87,20 @@ export default class SearchHeader extends Component {
     };
   }
 
+  get showTypeRefinementList() {
+    return (
+      this.args.searchType === "topics" || this.args.searchType === "posts"
+    );
+  }
+
   get showCategoryRefinementList() {
+    if (
+      this.args.uiState[this.args.searchType]?.refinementList?.type.includes(
+        "private_message"
+      )
+    ) {
+      return false;
+    }
     return (
       this.args.searchType === "topics" || this.args.searchType === "posts"
     );
@@ -97,6 +126,10 @@ export default class SearchHeader extends Component {
 
   get showGroupRefinementList() {
     return this.args.searchType === "users";
+  }
+
+  get showAdvancedFiltersButton() {
+    return this.args.query?.length > 0;
   }
 
   @action
@@ -125,14 +158,29 @@ export default class SearchHeader extends Component {
         </div>
       </div>
 
-      <DButton
-        @label="search.advanced.title"
-        @icon="cog"
-        @action={{this.toggleAdvancedFilters}}
-      />
+      {{#if this.showAdvancedFiltersButton}}
+        <DButton
+          @label="search.advanced.title"
+          @icon="cog"
+          @action={{this.toggleAdvancedFilters}}
+        />
+      {{/if}}
 
       {{#if this.showAdvancedFilters}}
-        <div class="instant-search-refinements">
+        <div
+          class="instant-search-refinements"
+          data-current-refinements={{this.currentRefinements}}
+        >
+          <@instantSearch.AisRefinementList
+            @searchInstance={{@searchInstance}}
+            @attribute="type"
+            @showMore={{false}}
+            @searchable={{true}}
+            @searchablePlaceholder="Search for type"
+            @cssClasses={{this.refinementListClasses}}
+            @templates={{this.refinementListTemplate}}
+            @rootClass="refinement-list-container type-refinment"
+          />
           {{#if this.showCategoryRefinementList}}
             <@instantSearch.AisRefinementList
               @searchInstance={{@searchInstance}}
@@ -142,7 +190,7 @@ export default class SearchHeader extends Component {
               @searchablePlaceholder="Search for categories"
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
-              @rootClass="refinement-list-container"
+              @rootClass="refinement-list-container category-refinement"
             />
           {{/if}}
           {{#if this.showUserRefinementList}}
@@ -154,7 +202,7 @@ export default class SearchHeader extends Component {
               @searchablePlaceholder="Search for users"
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
-              @rootClass="refinement-list-container"
+              @rootClass="refinement-list-container user-refinement"
             />
           {{/if}}
           {{#if this.showTagRefinementList}}
@@ -166,7 +214,7 @@ export default class SearchHeader extends Component {
               @searchablePlaceholder="Search for tags"
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
-              @rootClass="refinement-list-container"
+              @rootClass="refinement-list-container tag-refinement"
             />
           {{/if}}
           {{#if this.showTrustRefinementList}}
@@ -178,7 +226,7 @@ export default class SearchHeader extends Component {
               @searchablePlaceholder="Search for Trust Levels"
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
-              @rootClass="refinement-list-container"
+              @rootClass="refinement-list-container trust-level-refinement"
             />
           {{/if}}
           {{#if this.showGroupRefinementList}}
@@ -190,7 +238,7 @@ export default class SearchHeader extends Component {
               @searchablePlaceholder="Search for Groups"
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
-              @rootClass="refinement-list-container"
+              @rootClass="refinement-list-container group-refinement"
             />
           {{/if}}
         </div>
