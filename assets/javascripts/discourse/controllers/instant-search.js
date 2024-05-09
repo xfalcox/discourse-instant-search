@@ -2,7 +2,6 @@ import { tracked } from "@glimmer/tracking";
 import Controller from "@ember/controller";
 import { action } from "@ember/object";
 import { inject as service } from "@ember/service";
-import { ajax } from "discourse/lib/ajax";
 import loadInstantSearch from "discourse/lib/load-instant-search";
 
 export default class InstantSearch extends Controller {

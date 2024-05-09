@@ -1,10 +1,13 @@
 import Component from "@glimmer/component";
+import { tracked } from '@glimmer/tracking';
 import { ajax } from "discourse/lib/ajax";
 import { bind } from "discourse-common/utils/decorators";
 import SearchHeader from "./search-header";
 import SearchResults from "./search-results";
 
 export default class SearchContainer extends Component {
+  @tracked noLoop = false;
+
   get customMiddleware() {
     const context = this;
     return [
@@ -27,13 +30,18 @@ export default class SearchContainer extends Component {
   @bind
   async searchFunction(helper) {
     const query = helper.getQuery().query;
+    const page = helper.getPage();
 
     if (query === "") {
       return;
     }
 
-    if (this.args.searchMode === "keyword") {
-      helper.search();
+    if (
+      this.args.searchMode === "keyword" ||
+      this.args.searchType === "user" ||
+      this.args.searchType === "chat_message"
+    ) {
+      helper.setQueryParameter("typesenseVectorQuery", null).search();
       return;
     }
 
@@ -48,25 +56,27 @@ export default class SearchContainer extends Component {
       return response.embeddings;
     });
 
-    if (this.args.searchMode === "semantic") {
+    if (this.args.searchMode === "semantic" || this.args.searchMode === "hyde") {
       helper
         .setQueryParameter(
           "typesenseVectorQuery",
-          `embeddings:([${embeddings.join(",")}], k:1000)`
+          `embeddings:([${embeddings.join(",")}], k:1000)`,
         )
         .setQueryParameter("query", "*")
+        .setPage(page)
         .search();
-    } else if (this.args.searchMode === "hybrid") {
+    } else {
+      // hybrid
       helper
         .setQueryParameter(
-          "typesenseVectorQuery", // <=== Special parameter that only works in typesense-instantsearch-adapter@2.7.0-3 and above
-          `embeddings:([${embeddings.join(",")}], k:1000)`
+          "typesenseVectorQuery",
+          `embeddings:([${embeddings.join(",")}], k:1000)`,
         )
+        .setPage(page)
         .search();
-    } else if (this.args.searchMode === "hyde") {
-      helper.setQueryParameter("typesenseVectorQuery", null).search();
     }
   }
+
 
   <template>
     <@instantSearch.AisInstantSearch
