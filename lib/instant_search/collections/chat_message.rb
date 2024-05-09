@@ -33,7 +33,7 @@ module ::InstantSearch::Collections
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
         thread_id: @object.thread_id,
-        thread_name: @object.thread&.name,
+        thread_name: @object.thread&.title,
         security: security,
       }
     end
