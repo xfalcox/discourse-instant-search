@@ -60,7 +60,7 @@ module ::InstantSearch::Collections
     def should_index?
       return false if @object.deleted_at.present?
       return false unless @object.topic.present?
-      
+
       return true if SiteSetting.index_private_content
       return false if @object&.topic&.category&.read_restricted?
       return false if @object&.topic&.archetype == Archetype.private_message
