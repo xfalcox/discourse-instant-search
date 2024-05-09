@@ -44,14 +44,15 @@ export default class SearchResults extends Component {
     const highlightedBlurb = hit._highlightResult.blurb.value || hit.blurb;
     const content = this.buildContentHTML(highlightedBlurb);
     const template = `
-          ${author}
           <div class="fps-topic">
             ${title}
             ${category}
             <div class="blurb container">
-            ${date}
+          
             ${content}
             </div>
+                      ${author}
+  ${date}
           </div>
           `;
 

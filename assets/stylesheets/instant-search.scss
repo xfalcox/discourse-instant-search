@@ -3,8 +3,7 @@
     display: grid;
     grid-template-areas: "input filters submit";
     grid-template-columns: 1fr auto auto auto;
-    margin-right: -0.5em; // fixes gap issue due to reordering
-    gap: 0.5em;
+    gap: 0;
     margin-bottom: 1em;
     @include breakpoint("tablet") {
       grid-template-areas: "input input" "filters submit";
@@ -22,6 +21,7 @@
     }
     .instant-search-filters {
       grid-area: filters;
+      margin-left: 1em;
       @include breakpoint("tablet") {
         div,
         .search-types {
@@ -51,6 +51,34 @@
     padding: 2em 10% 2.5em;
   }
 
+  .search-page-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1em;
+    margin-bottom: 0.5em;
+
+    &__stats {
+      display: flex;
+      font-weight: normal;
+      font-size: var(--font-down-2);
+      color: var(--primary-medium);
+    }
+
+    .select-kit .select-kit-header:not(.btn) {
+      border: none;
+      padding: 0.25em 0.5em;
+      margin-left: -0.5em;
+      background: transparent;
+    }
+
+    .select-kit-collection {
+      font-size: var(--font-down-2);
+      font-weight: normal;
+    }
+  }
+
   .instant-search-filters {
     display: flex;
 
@@ -62,7 +90,56 @@
 
   .search-results {
     .fps-result-entries {
-      margin: 0;
+      margin: 0 0 2em;
+    }
+
+    &.--topics {
+      .fps-result {
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--primary-low);
+      }
+
+      .fps-topic {
+        display: grid;
+        grid-template-areas: "title author date" "category author date" "excerpt excerpt excerpt";
+        grid-template-columns: 1fr 2em 5em;
+        width: 100%;
+        gap: 0 0.5em;
+
+        .topic {
+          grid-area: title;
+          padding: 0;
+          .search-link {
+            padding: 1em 1em 0 0;
+          }
+        }
+        .search-category {
+          grid-area: category;
+        }
+        .author {
+          grid-area: author;
+          align-self: center;
+          a {
+            display: block;
+            width: 1.6em;
+            img {
+              width: 100%;
+              height: auto;
+            }
+          }
+        }
+        .blurb {
+          grid-area: excerpt;
+          margin-top: 0.25em;
+          margin-bottom: 0.5em;
+        }
+        .date {
+          grid-area: date;
+          align-self: center;
+          justify-content: end;
+          color: var(--primary-medium);
+        }
+      }
     }
 
     &.--users {
@@ -97,6 +174,10 @@
     gap: 0.5rem;
     position: relative;
   }
+
+  .ais-SearchBox-submit {
+    display: none;
+  }
 }
 
 .ais-Searchform {
@@ -121,16 +202,20 @@
 .instant-search-refinements {
   margin-top: 2em;
   gap: 1rem;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 
   .refinement-list-container {
     flex: 1;
-    min-width: 15em;
   }
 
   .refinement-list {
-    flex: 1;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
   .ais-SearchBox-form {
@@ -164,6 +249,10 @@
   }
 
   .ais-RefinementList-list {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 0.5em;
@@ -198,13 +287,4 @@
   .ais-RefinementList-noResults {
     padding: 1rem;
   }
-}
-
-.instant-search-modes__container {
-  background: var(--primary-very-low);
-  padding: 0.5rem;
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-  align-items: center;
 }

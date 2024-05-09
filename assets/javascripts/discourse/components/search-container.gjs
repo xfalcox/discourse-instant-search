@@ -97,6 +97,8 @@ export default class SearchContainer extends Component {
           @query={{@query}}
           @searchType={{@searchType}}
           @uiState={{this.uiState}}
+          @searchModes={{@searchModes}}
+          @searchMode={{@searchMode}}
         >
           <:sortBy>
             {{yield to="sortBy"}}

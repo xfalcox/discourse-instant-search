@@ -6,6 +6,7 @@ import DButton from "discourse/components/d-button";
 import i18n from "discourse-common/helpers/i18n";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import I18n from "discourse-i18n";
+import ComboBox from "select-kit/components/combo-box";
 
 export default class SearchHeader extends Component {
   @tracked showAdvancedFilters = false;
@@ -146,7 +147,18 @@ export default class SearchHeader extends Component {
   <template>
     <div class="search-header" role="search">
       <h1 class="search-page-heading">
-        <@instantSearch.AisStats @searchInstance={{@searchInstance}} />
+        <ComboBox
+          class="instant-search-modes__input"
+          @valueProperty="value"
+          @content={{@searchModes}}
+          @value={{@searchMode}}
+        />
+
+        {{#if @query}}
+          <span class="search-page-heading__stats">
+            <@instantSearch.AisStats @searchInstance={{@searchInstance}} />
+          </span>
+        {{/if}}
       </h1>
       <div class="search-bar" {{this.prefillQuery}}>
         <@instantSearch.AisSearchBox
@@ -162,6 +174,7 @@ export default class SearchHeader extends Component {
         <div class="instant-search-filters">
           {{yield to="sortBy"}}
         </div>
+
       </div>
 
       {{#if this.showAdvancedFiltersButton}}
