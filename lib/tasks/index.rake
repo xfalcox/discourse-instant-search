@@ -38,7 +38,11 @@ task "instant_search:index", %i[concurrency] => [:environment] do |_, args|
         Thread.new do
           until (item = queue.pop) == end_object
             ActiveRecord::Base.connection_pool.with_connection do
-              collection.new(item).create
+              begin
+                collection.new(item).create
+              rescue StandardError => e
+                puts "### Error indexing #{item.class.name} #{item.id}: #{e.message}"
+              end
               i += 1
               print "### Indexed #{i * 100 / total}% of #{collection.name}          \r"
             end
