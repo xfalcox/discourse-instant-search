@@ -94,13 +94,15 @@ export default class InstantSearch extends Controller {
         query_by: "topic_title,raw",
         query_by_weights: "2,1",
         exclude_fields: "embeddings",
-        facet_by: "author_username,category,tags,type",
+        facet_by:
+          "author_username,category,tags,type,allowed_users,allowed_groups",
         sort_by: `_text_match(buckets: 20):desc,${this.categoryWeights}`,
       },
       topics: {
         query_by: "title,blurb",
         exclude_fields: "embeddings",
-        facet_by: "author_username,category,tags,type",
+        facet_by:
+          "author_username,category,tags,type,allowed_users,allowed_groups",
         sort_by: `_text_match(buckets: 10):desc,${this.categoryWeights}`,
       },
       users: {

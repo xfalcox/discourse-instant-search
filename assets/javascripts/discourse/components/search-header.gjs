@@ -132,6 +132,12 @@ export default class SearchHeader extends Component {
     return this.args.query?.length > 0;
   }
 
+  get showAllowedUsersAndGroupsList() {
+    return (
+      this.args.searchType === "topics" || this.args.searchType === "posts"
+    );
+  }
+
   @action
   toggleAdvancedFilters() {
     this.showAdvancedFilters = !this.showAdvancedFilters;
@@ -171,16 +177,18 @@ export default class SearchHeader extends Component {
           class="instant-search-refinements"
           data-current-refinements={{this.currentRefinements}}
         >
-          <@instantSearch.AisRefinementList
-            @searchInstance={{@searchInstance}}
-            @attribute="type"
-            @showMore={{false}}
-            @searchable={{true}}
-            @searchablePlaceholder="Search for type"
-            @cssClasses={{this.refinementListClasses}}
-            @templates={{this.refinementListTemplate}}
-            @rootClass="refinement-list-container type-refinment"
-          />
+          {{#if this.showTypeRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="type"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for type"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container type-refinment"
+            />
+          {{/if}}
           {{#if this.showCategoryRefinementList}}
             <@instantSearch.AisRefinementList
               @searchInstance={{@searchInstance}}
@@ -239,6 +247,29 @@ export default class SearchHeader extends Component {
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
               @rootClass="refinement-list-container group-refinement"
+            />
+          {{/if}}
+
+          {{#if this.showAllowedUsersAndGroupsList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="allowed_users"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for allowed users"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container allowed-users-refinement"
+            />
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="allowed_groups"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for allowed groups"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container allowed-groups-refinement"
             />
           {{/if}}
         </div>
