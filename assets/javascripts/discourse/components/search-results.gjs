@@ -1,4 +1,5 @@
 import Component from "@glimmer/component";
+import { eq } from "truth-helpers";
 import { relativeAge } from "discourse/lib/formatter";
 
 export default class SearchResults extends Component {
@@ -48,11 +49,10 @@ export default class SearchResults extends Component {
             ${title}
             ${category}
             <div class="blurb container">
-          
-            ${content}
+              ${content}
             </div>
-                      ${author}
-  ${date}
+              ${author}
+              ${date}
           </div>
           `;
 
@@ -113,15 +113,30 @@ export default class SearchResults extends Component {
       hit._highlightResult?.username?.value || hit.username;
     const title = this.buildUsernameTitle(highlightedtitle);
     const date = this.buildDateHTML(hit.created_at);
-
     return `
-      ${authorHTML}
-      <div class="fps-topic">
-        ${title}
-        <div class="blurb container">
-        ${date}
+    <div class="user-result">
+      <div class="user-result__user">
+        ${authorHTML}
+        <div class="fps-topic">
+          ${title}
         </div>
+      </div> 
+      <div class="user-result__likes-received --stat">
+        ${hit.likes_received}
       </div>
+      <div class="user-result__likes-given --stat">
+        ${hit.likes_given}
+      </div>
+      <div class="user-result__topics-created --stat">
+        ${hit.topics_created}
+      </div>
+      <div class="user-result__replies-created --stat">
+        ${hit.posts_created}
+      </div>
+      <div class="user-result__account-created">
+        ${date}
+      </div>
+    </div>    
     `;
   }
 
@@ -209,6 +224,16 @@ export default class SearchResults extends Component {
 
   <template>
     <div class="search-results --{{@searchType}}" role="region">
+      {{#if (eq @searchType "users")}}
+        <div class="--heading">
+          <span>Username</span>
+          <span class="--stat">Likes received</span>
+          <span class="--stat">Likes given</span>
+          <span class="--stat">Topics created</span>
+          <span class="--stat">Replies</span>
+          <span>Created</span>
+        </div>
+      {{/if}}
       <@instantSearch.AisInfiniteHits
         @searchInstance={{@searchInstance}}
         @templates={{this.customHitTemplate}}

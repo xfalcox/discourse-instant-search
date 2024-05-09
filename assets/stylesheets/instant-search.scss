@@ -1,12 +1,13 @@
 .instant-search-container {
   .search-bar {
     display: grid;
-    grid-template-areas: "input filters submit";
-    grid-template-columns: 1fr auto auto auto;
-    gap: 0;
+    grid-template-areas: "input filters ";
+    grid-template-columns: 1fr auto;
+    gap: 0.5em;
+    margin-right: -0.5em; // fixes gap issue
     margin-bottom: 1em;
     @include breakpoint("tablet") {
-      grid-template-areas: "input input" "filters submit";
+      grid-template-areas: "input " "filters";
     }
 
     .instant-search-box-container,
@@ -21,7 +22,6 @@
     }
     .instant-search-filters {
       grid-area: filters;
-      margin-left: 1em;
       @include breakpoint("tablet") {
         div,
         .search-types {
@@ -49,6 +49,9 @@
 
   .search-header {
     padding: 2em 10% 2.5em;
+    @media screen and (max-width: 850px) {
+      padding: 1rem 1rem 1.5rem;
+    }
   }
 
   .search-page-heading {
@@ -143,16 +146,136 @@
     }
 
     &.--users {
-      .fps-result-entries {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
-        gap: 1.25em 1em;
-        margin: 1em 0 2em 0;
+      display: grid;
+      gap: 1em;
+      grid-template-areas: "user likes-received likes-given topics-created posts-created date";
+      grid-template-columns: 12em repeat(4, calc(1fr / 4)) 6em;
+      .--heading {
+        display: none;
       }
 
+      @media screen and (max-width: 850px) {
+        grid-template-areas: "user date";
+        grid-template-columns: 1fr 6em;
+        .--heading {
+          display: none;
+        }
+      }
+
+      margin: 1em 0 2em 0;
+
+      > div,
+      .ais-InfiniteHits,
+      .ais-InfiniteHits-list {
+        display: grid;
+        grid-template-columns: subgrid;
+        width: 100%;
+        grid-column: 1 / 7;
+        @media screen and (max-width: 850px) {
+          grid-column: 1 / 3;
+        }
+      }
+
+      .ais-InfiniteHits-loadMore.btn {
+        justify-self: start;
+      }
+
+      &:has(.ais-InfiniteHits) {
+        .--heading {
+          display: grid;
+          grid-template-columns: subgrid;
+        }
+      }
+
+      .--heading {
+        color: var(--primary-medium);
+        span {
+          display: flex;
+          line-height: 1.2;
+          text-align: center;
+          justify-content: center;
+          align-items: end;
+          width: 100%;
+          &:first-child {
+            justify-content: start;
+          }
+          &:last-child {
+            justify-content: end;
+          }
+          &.--stat {
+            @media screen and (max-width: 850px) {
+              display: none;
+            }
+          }
+        }
+      }
       .fps-result {
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-row: auto;
+        grid-column: 1 / 7;
+        @media screen and (max-width: 850px) {
+          grid-column: 1 / 3;
+        }
         margin: 0;
         padding: 0;
+      }
+    }
+    .user-result {
+      display: grid;
+      grid-template-columns: subgrid;
+      width: 100%;
+      grid-column: 1 / 7;
+      @media screen and (max-width: 850px) {
+        grid-column: 1 / 3;
+      }
+      border-top: 1px solid var(--primary-low);
+      padding: 1em 0;
+
+      .topic-title {
+        font-weight: bold;
+        color: var(--primary-high);
+        font-size: var(--font-0);
+        padding-top: 0.25em;
+      }
+
+      &__user {
+        display: flex;
+        grid-area: user;
+        grid-column: 1;
+      }
+      .--stat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-medium);
+        font-size: var(--font-up-1);
+        @media screen and (max-width: 850px) {
+          display: none;
+        }
+      }
+      &__likes-received {
+        grid-area: likes-received;
+      }
+      &__likes-given {
+        grid-area: likes-given;
+      }
+      &__topics-created {
+        grid-area: topics-created;
+      }
+      &__replies-created {
+        grid-area: posts-created;
+      }
+      &__account-created {
+        grid-area: date;
+        .date {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+          justify-content: flex-end;
+          color: var(--primary-medium);
+        }
       }
     }
   }
