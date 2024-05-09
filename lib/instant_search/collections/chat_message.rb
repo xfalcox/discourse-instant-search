@@ -40,6 +40,7 @@ module ::InstantSearch::Collections
 
     def should_index?
       return false if @object.deleted_at.present?
+      return false unless @object.user&.username.present?
       return false unless @object.chat_channel.present?
       return true if SiteSetting.index_private_content
       return false if @object.chat_channel.class == Chat::DirectMessageChannel
