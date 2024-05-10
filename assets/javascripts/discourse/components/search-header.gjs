@@ -269,7 +269,7 @@ export default class SearchHeader extends Component {
               @attribute="allowed_users"
               @showMore={{false}}
               @searchable={{true}}
-              @searchablePlaceholder="Search for allowed users"
+              @searchablePlaceholder="Filter to a PM recipient"
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
               @rootClass="refinement-list-container allowed-users-refinement"
@@ -279,7 +279,7 @@ export default class SearchHeader extends Component {
               @attribute="allowed_groups"
               @showMore={{false}}
               @searchable={{true}}
-              @searchablePlaceholder="Search for allowed groups"
+              @searchablePlaceholder="Filter to an inbox"
               @cssClasses={{this.refinementListClasses}}
               @templates={{this.refinementListTemplate}}
               @rootClass="refinement-list-container allowed-groups-refinement"
