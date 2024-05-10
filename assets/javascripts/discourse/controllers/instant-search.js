@@ -83,8 +83,8 @@ export default class InstantSearch extends Controller {
   get searchParameters() {
     return {
       posts: {
-        query_by: "topic_title,raw",
-        query_by_weights: "2,1",
+        query_by: "raw,topic_title",
+        query_by_weights: "3,1",
         exclude_fields: "embeddings",
         facet_by:
           "author_username,category,tags,type,allowed_users,allowed_groups",
