@@ -13,7 +13,9 @@ export default class SearchHeader extends Component {
 
   prefillQuery = modifier(() => {
     // Should keep previous query when switching sort modes:
-    this.args.searchInstance.helper.setQuery(this.args.query).search();
+    if (this.args.query?.length > 0) {
+      this.args.searchInstance.helper.setQuery(this.args.query);
+    }
   });
 
   get searchBoxClasses() {
