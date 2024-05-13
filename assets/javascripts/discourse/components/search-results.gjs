@@ -222,23 +222,29 @@ export default class SearchResults extends Component {
       </div>`;
   }
 
+  get hasQuery() {
+    return this.args.query.length > 0;
+  }
+
   <template>
-    <div class="search-results --{{@searchType}}" role="region">
-      {{#if (eq @searchType "users")}}
-        <div class="--heading">
-          <span>Username</span>
-          <span class="--stat">Likes received</span>
-          <span class="--stat">Likes given</span>
-          <span class="--stat">Topics created</span>
-          <span class="--stat">Replies</span>
-          <span>Created</span>
-        </div>
-      {{/if}}
-      <@instantSearch.AisInfiniteHits
-        @searchInstance={{@searchInstance}}
-        @templates={{this.customHitTemplate}}
-        @cssClasses={{this.infiniteHitsClasses}}
-      />
-    </div>
+    {{#if this.hasQuery}}
+      <div class="search-results --{{@searchType}}" role="region">
+        {{#if (eq @searchType "users")}}
+          <div class="--heading">
+            <span>Username</span>
+            <span class="--stat">Likes received</span>
+            <span class="--stat">Likes given</span>
+            <span class="--stat">Topics created</span>
+            <span class="--stat">Replies</span>
+            <span>Created</span>
+          </div>
+        {{/if}}
+        <@instantSearch.AisInfiniteHits
+          @searchInstance={{@searchInstance}}
+          @templates={{this.customHitTemplate}}
+          @cssClasses={{this.infiniteHitsClasses}}
+        />
+      </div>
+    {{/if}}
   </template>
 }

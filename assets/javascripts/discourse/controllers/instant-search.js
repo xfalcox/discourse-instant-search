@@ -50,6 +50,14 @@ export default class InstantSearch extends Controller {
         label: "Hybrid Search",
         value: "hybrid",
       },
+      {
+        label: "Semantic Search",
+        value: "semantic",
+      },
+      {
+        label: "Hyde Search",
+        value: "hyde",
+      },
     ];
   }
 
