@@ -105,7 +105,7 @@
       .fps-topic {
         display: grid;
         grid-template-areas: "title author date" "category author date" "excerpt excerpt excerpt";
-        grid-template-columns: 1fr 2em 5em;
+        grid-template-columns: 1fr 2em auto;
         width: 100%;
         gap: 0 0.5em;
 
@@ -221,6 +221,85 @@
         padding: 0;
       }
     }
+
+    .topic-title svg {
+      height: 1em;
+      fill: var(--primary-medium);
+      vertical-align: -0.15em;
+    }
+
+    &.--posts {
+      .fps-result {
+        margin-bottom: 1em;
+      }
+    }
+
+    .post-result {
+      display: grid;
+      grid-template-areas: "title title" "avatar excerpt";
+      grid-template-columns: auto 1fr;
+      width: 100%;
+      gap: 0 0.75em;
+      border-bottom: 1px solid var(--primary-low);
+      padding-bottom: 2em;
+
+      &__user {
+        grid-area: avatar;
+      }
+
+      &__title {
+        grid-area: title;
+
+        padding-left: 0.25em;
+        margin-bottom: 1em;
+
+        .topic {
+          padding-bottom: 0;
+        }
+
+        .search-category {
+          margin-top: 0;
+          margin-bottom: 0.25em;
+        }
+      }
+
+      &__avatar {
+        .author {
+          padding-top: 0.25em;
+          margin-right: 0;
+        }
+      }
+
+      &__excerpt {
+        grid-area: excerpt;
+
+        display: grid;
+        grid-template-areas: "username date" "excerpt excerpt";
+
+        .blurb {
+          grid-area: excerpt;
+          padding-top: 0.5em;
+          &:after {
+            display: inline;
+            content: "...";
+            color: var(--primary-medium);
+            margin-left: -0.25em;
+          }
+        }
+
+        .username {
+          font-weight: bold;
+          color: var(--primary-high);
+        }
+
+        .date {
+          grid-area: date;
+          justify-self: end;
+          color: var(--primary-medium);
+        }
+      }
+    }
+
     .user-result {
       display: grid;
       grid-template-columns: subgrid;
