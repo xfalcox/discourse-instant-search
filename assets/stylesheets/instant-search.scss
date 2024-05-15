@@ -240,6 +240,10 @@
       height: 1em;
       fill: var(--primary-medium);
       vertical-align: -0.15em;
+      &.lock {
+        height: 0.8em;
+        vertical-align: -0.05em; // vertical alignment
+      }
     }
 
     &.--posts {
