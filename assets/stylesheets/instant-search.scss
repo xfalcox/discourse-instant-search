@@ -462,6 +462,10 @@
     margin-top: 1em;
     font-size: var(--font-up-2);
   }
+
+  mark {
+    background: var(--highlight-bg);
+  }
 }
 
 .instant-search-container {
