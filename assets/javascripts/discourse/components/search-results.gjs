@@ -36,7 +36,7 @@ export default class SearchResults extends Component {
     const date = this.buildDateHTML(hit.created_at);
     const category =
       hit.category && hit.tags
-        ? this.buildCategoryHTML(hit.category, hit.tags)
+        ? this.buildCategoryHTML(hit.category, hit.tags, hit.category_id)
         : "";
 
     const highlightedTitle = hit._highlightResult.title.value || hit.title;
@@ -76,7 +76,7 @@ export default class SearchResults extends Component {
     const content = hit.raw ? this.buildContentHTML(snippetContent) : "";
     const category =
       hit.category && hit.tags
-        ? this.buildCategoryHTML(hit.category, hit.tags)
+        ? this.buildCategoryHTML(hit.category, hit.tags, hit.category_id)
         : "";
     const author = this.buildAuthorHTML(hit.author_username);
     const date = this.buildDateHTML(hit.created_at);
@@ -237,12 +237,29 @@ export default class SearchResults extends Component {
     return tagsWrapper;
   }
 
-  buildCategoryHTML(category, tags) {
-    // TODO: Get proper category id and category badge color.
+  buildCategoryHTML(category, tags, category_id) {
+    const categoryData = this.args.categoriesList.find(
+      (cat) => cat.id === category_id
+    );
+
+    const categoryParentData = categoryData?.parent_category_id
+      ? this.args.categoriesList.find(
+          (cat) => cat.id === categoryData.parent_category_id
+        )
+      : null;
+
+    const categoryParentColor = categoryParentData
+      ? `--parent-category-badge-color: #${categoryParentData.color};`
+      : "";
+
+    const hasParent = categoryParentData ? "--has-parent" : "";
+
     return `
       <div class="search-category">
-        <a href="/c/${category}" class="badge-category__wrapper" style="--category-badge-color: #00A94F">
-          <span class="badge-category">
+        <a href="/c/${category}" class="badge-category__wrapper" style="--category-badge-color: #${
+      categoryData.color
+    }; ${categoryParentColor}">
+          <span class="badge-category ${hasParent}">
             <span class="badge-category__name">${category}</span>
           </span>
         </a>

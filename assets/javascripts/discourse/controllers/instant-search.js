@@ -13,6 +13,7 @@ export default class InstantSearch extends Controller {
   @tracked searchMode = "keyword";
   @tracked apiKey = this.model.api_key;
   @tracked categoryWeights = this.model.categories;
+  @tracked categoriesList = this.model.categories_list;
 
   constructor() {
     super(...arguments);

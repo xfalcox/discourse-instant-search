@@ -153,6 +153,7 @@ export default class SearchContainer extends Component {
             @instantSearch={{@instantSearch}}
             @searchInstance={{Ais.searchInstance}}
             @searchType={{@searchType}}
+            @categoriesList={{@categoriesList}}
           />
         </div>
       </section>
