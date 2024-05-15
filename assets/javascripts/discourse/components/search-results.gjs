@@ -201,7 +201,7 @@ export default class SearchResults extends Component {
     const formattedDate = relativeAge(dateValue);
     return `
       <div class="date">
-        <span class="relative-date">${formattedDate}</span>
+        <span>${formattedDate}</span>
       </div>
     `;
   }
