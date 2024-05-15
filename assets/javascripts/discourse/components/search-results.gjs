@@ -249,7 +249,7 @@ export default class SearchResults extends Component {
       : null;
 
     const categoryParentColor = categoryParentData
-      ? `--parent-category-badge-color: #${categoryParentData.color};`
+      ? `--parent-category-badge-color: #${categoryParentData?.color};`
       : "";
 
     const hasParent = categoryParentData ? "--has-parent" : "";
@@ -257,7 +257,7 @@ export default class SearchResults extends Component {
     return `
       <div class="search-category">
         <a href="/c/${category}" class="badge-category__wrapper" style="--category-badge-color: #${
-      categoryData.color
+      categoryData?.color
     }; ${categoryParentColor}">
           <span class="badge-category ${hasParent}">
             <span class="badge-category__name">${category}</span>
