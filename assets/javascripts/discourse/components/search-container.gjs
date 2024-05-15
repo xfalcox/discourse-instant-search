@@ -5,6 +5,7 @@ import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import { service } from "@ember/service";
 import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
 import { ajax } from "discourse/lib/ajax";
+import { popupAjaxError } from "discourse/lib/ajax-error";
 import discourseDebounce from "discourse-common/lib/debounce";
 import { bind } from "discourse-common/utils/decorators";
 import SearchHeader from "./search-header";
@@ -38,7 +39,9 @@ export default class SearchContainer extends Component {
 
   async _fetchEmbeddings(uiState, setUiState, helper) {
     const query = helper.getQuery().query;
-    if (!query || query?.length === 0) {
+    const page = helper.getPage();
+
+    if (!query || query?.length === 0 || page) {
       return setUiState(uiState);
     }
     this.loading = true;
@@ -76,8 +79,7 @@ export default class SearchContainer extends Component {
         return setUiState(uiState);
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
+      popupAjaxError(e);
     }
   }
 
