@@ -7,8 +7,10 @@ import i18n from "discourse-common/helpers/i18n";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import I18n from "discourse-i18n";
 import ComboBox from "select-kit/components/combo-box";
+import { service } from "@ember/service";
 
 export default class SearchHeader extends Component {
+  @service dInstantSearch;
   @tracked showAdvancedFilters = false;
 
   prefillQuery = modifier(() => {
@@ -47,22 +49,6 @@ export default class SearchHeader extends Component {
     };
   }
 
-  get currentRefinements() {
-    const { refinementList } = this.args.uiState[this.args.searchType];
-    if (!refinementList) {
-      return "";
-    }
-    const currentRefinements = [];
-
-    for (const [key, values] of Object.entries(refinementList)) {
-      values.forEach((value) => {
-        currentRefinements.push(`ref-${key}-${value}`);
-      });
-    }
-
-    return currentRefinements.join(", ");
-  }
-
   get hitsPerPageItems() {
     return [
       { label: "6 per page", value: 6, default: true },
@@ -97,11 +83,11 @@ export default class SearchHeader extends Component {
   }
 
   get showCategoryRefinementList() {
-    if (
-      this.args.uiState[this.args.searchType]?.refinementList?.type.includes(
-        "private_message"
-      )
-    ) {
+    const typeRefinements = this.dInstantSearch.helper
+      .getRefinements("type")
+      .map(({ value }) => value);
+
+    if (typeRefinements.includes("private_message")) {
       return false;
     }
     return (
@@ -188,10 +174,7 @@ export default class SearchHeader extends Component {
       {{/if}}
 
       {{#if this.showAdvancedFilters}}
-        <div
-          class="instant-search-refinements"
-          data-current-refinements={{this.currentRefinements}}
-        >
+        <div class="instant-search-refinements">
           {{#if this.showTypeRefinementList}}
             <@instantSearch.AisRefinementList
               @searchInstance={{@searchInstance}}

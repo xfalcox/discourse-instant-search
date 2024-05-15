@@ -23,6 +23,12 @@ export default class SearchContainer extends Component {
       () => ({
         onStateChange({ uiState }) {
           context.uiState = uiState;
+          // Adds Ember tracking context to the search instance helper
+          // so that the property is tracked for changes *when the UI state changes*
+          // this is helpful for us to use the helper methods such as getRefinements()
+          context.dInstantSearch.helper =
+            context.dInstantSearch.searchInstance.helper;
+
           const searchType = context.args.searchType;
           const currentSearchType = uiState[searchType];
           if (currentSearchType?.query) {
