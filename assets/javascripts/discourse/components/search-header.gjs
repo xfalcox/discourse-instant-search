@@ -1,13 +1,13 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse-common/helpers/i18n";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import I18n from "discourse-i18n";
 import ComboBox from "select-kit/components/combo-box";
-import { service } from "@ember/service";
 
 export default class SearchHeader extends Component {
   @service dInstantSearch;
@@ -132,6 +132,15 @@ export default class SearchHeader extends Component {
     this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
+  @action
+  changeSearchMode(newSearchMode) {
+    this.args.updateSearchMode(newSearchMode);
+
+    if (this.args.query?.length > 0) {
+      this.dInstantSearch.helper.search();
+    }
+  }
+
   <template>
     <div class="search-header" role="search">
       <h1 class="search-page-heading">
@@ -140,6 +149,7 @@ export default class SearchHeader extends Component {
           @valueProperty="value"
           @content={{@searchModes}}
           @value={{@searchMode}}
+          @onChange={{this.changeSearchMode}}
         />
 
         {{#if @query}}

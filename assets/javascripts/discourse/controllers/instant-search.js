@@ -129,4 +129,9 @@ export default class InstantSearch extends Controller {
   async updateQuery(newQuery) {
     this.query = newQuery;
   }
+
+  @action
+  updateSearchMode(newSearchMode) {
+    this.searchMode = newSearchMode;
+  }
 }
