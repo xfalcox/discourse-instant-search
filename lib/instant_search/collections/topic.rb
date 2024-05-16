@@ -97,7 +97,7 @@ module ::InstantSearch::Collections
       JSON.parse(
         DB
           .query_single(
-            "SELECT embeddings FROM ai_topic_embeddings_4_1 WHERE topic_id = ? LIMIT 1",
+            "SELECT embeddings FROM ai_topic_embeddings_8_1 WHERE topic_id = ? LIMIT 1",
             @object.id,
           )
           .first
