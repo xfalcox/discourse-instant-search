@@ -464,7 +464,8 @@
   }
 
   mark {
-    background: var(--highlight-bg);
+    background: var(--highlight-low-or-medium);
+    color: var(--primary);
   }
 }
 
