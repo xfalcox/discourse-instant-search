@@ -7,7 +7,6 @@ import DButton from "discourse/components/d-button";
 import i18n from "discourse-common/helpers/i18n";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import I18n from "discourse-i18n";
-import ComboBox from "select-kit/components/combo-box";
 
 export default class SearchHeader extends Component {
   @service dInstantSearch;
@@ -15,8 +14,8 @@ export default class SearchHeader extends Component {
 
   prefillQuery = modifier(() => {
     // Should keep previous query when switching sort modes:
-    if (this.args.query?.length > 0) {
-      this.args.searchInstance.helper.setQuery(this.args.query);
+    if (this.dInstantSearch.query?.length > 0) {
+      this.args.searchInstance.helper.setQuery(this.dInstantSearch.query);
     }
   });
 
@@ -118,7 +117,7 @@ export default class SearchHeader extends Component {
   }
 
   get showAdvancedFiltersButton() {
-    return this.args.query?.length > 0;
+    return this.dInstantSearch.query?.length > 0;
   }
 
   get showAllowedUsersAndGroupsList() {
@@ -139,7 +138,7 @@ export default class SearchHeader extends Component {
           {{yield to="searchMode"}}
         </div>
 
-        {{#if @query}}
+        {{#if this.dInstantSearch.query}}
           <span class="search-page-heading__stats">
             <@instantSearch.AisStats @searchInstance={{@searchInstance}} />
           </span>

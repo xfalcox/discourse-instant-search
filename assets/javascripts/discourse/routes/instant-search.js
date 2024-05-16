@@ -6,7 +6,9 @@ import I18n from "discourse-i18n";
 export default DiscourseRoute.extend({
   titleToken() {
     return I18n.t("search.results_page", {
-      term: escapeExpression(this.controllerFor("instant-search").query),
+      term: escapeExpression(
+        this.controllerFor("instant-search").dInstantSearch.query
+      ),
     });
   },
 

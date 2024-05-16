@@ -32,9 +32,9 @@ export default class SearchContainer extends Component {
           const searchType = context.args.searchType;
           const currentSearchType = uiState[searchType];
           if (currentSearchType?.query) {
-            context.args.updateQuery(currentSearchType.query);
+            context.dInstantSearch.query = currentSearchType.query;
           } else {
-            context.args.updateQuery("");
+            context.dInstantSearch.query = "";
           }
         },
         subscribe() {},

@@ -59,6 +59,9 @@ export default class InstantSearch extends Controller {
   @action
   changeSearchMode(newSearchMode) {
     this.searchMode = newSearchMode;
+    if (this.dInstantSearch.query?.length > 0) {
+      this.dInstantSearch.helper.search();
+    }
 
     if (newSearchMode === "semantic" || newSearchMode === "hyde") {
       this.searchParameters = {
@@ -68,19 +71,16 @@ export default class InstantSearch extends Controller {
           exclude_fields: "embeddings",
           facet_by:
             "author_username,category,tags,type,allowed_users,allowed_groups",
-          // sort_by: `_vector_distance:asc`,
         },
         topics: {
           query_by: "title,blurb",
           exclude_fields: "embeddings",
           facet_by:
             "author_username,category,tags,type,allowed_users,allowed_groups",
-          // sort_by: `_vector_distance:asc`,
         },
         users: {
           query_by: "username,name",
           facet_by: "trust_level,groups",
-          sort_by: "_vector_distance:asc",
         },
         chat_messages: {
           query_by: "raw",

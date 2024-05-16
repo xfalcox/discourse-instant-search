@@ -1,8 +1,11 @@
 import Component from "@glimmer/component";
+import { service } from "@ember/service";
 import { eq } from "truth-helpers";
 import { relativeAge } from "discourse/lib/formatter";
 
 export default class SearchResults extends Component {
+  @service dInstantSearch;
+
   get infiniteHitsClasses() {
     return {
       root: "",
@@ -286,7 +289,7 @@ export default class SearchResults extends Component {
   }
 
   get hasQuery() {
-    return this.args.query.length > 0;
+    return this.dInstantSearch.query.length > 0;
   }
 
   <template>

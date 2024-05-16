@@ -11,7 +11,6 @@ export default class SearchWrapper extends Component {
   @service siteSettings;
   @tracked instantSearchModule;
   @tracked searchType = this.searchTypes[0].value;
-  @tracked query = "";
   @tracked embeddings = [];
   @tracked apiKey = this.args.model.api_key;
   @tracked categoriesList = this.args.model.categories_list;
@@ -74,11 +73,6 @@ export default class SearchWrapper extends Component {
     return this.instantSearchModule;
   }
 
-  @action
-  async updateQuery(newQuery) {
-    this.query = newQuery;
-  }
-
   <template>
     {{#if (eq this.searchType "topics")}}
       <SearchContainer
@@ -86,8 +80,6 @@ export default class SearchWrapper extends Component {
         @instantSearch={{this.instantSearch}}
         @searchType={{this.searchType}}
         @searchParameters={{@searchParameters}}
-        @updateQuery={{this.updateQuery}}
-        @query={{this.query}}
         @searchMode={{@searchMode}}
         @categoriesList={{this.categoriesList}}
       >
@@ -109,8 +101,6 @@ export default class SearchWrapper extends Component {
         @instantSearch={{this.instantSearch}}
         @searchType={{this.searchType}}
         @searchParameters={{@searchParameters}}
-        @updateQuery={{this.updateQuery}}
-        @query={{this.query}}
         @searchMode={{@searchMode}}
         @categoriesList={{this.categoriesList}}
       >
@@ -132,8 +122,6 @@ export default class SearchWrapper extends Component {
         @instantSearch={{this.instantSearch}}
         @searchType={{this.searchType}}
         @searchParameters={{@searchParameters}}
-        @updateQuery={{this.updateQuery}}
-        @query={{this.query}}
         @searchMode={{@searchMode}}
         @categoriesList={{this.categoriesList}}
       >
@@ -155,8 +143,6 @@ export default class SearchWrapper extends Component {
         @instantSearch={{this.instantSearch}}
         @searchType={{this.searchType}}
         @searchParameters={{@searchParameters}}
-        @updateQuery={{this.updateQuery}}
-        @query={{this.query}}
         @searchMode={{@searchMode}}
         @categoriesList={{this.categoriesList}}
       >
