@@ -137,8 +137,10 @@ export default class SearchContainer extends Component {
           @uiState={{this.uiState}}
           @searchModes={{@searchModes}}
           @searchMode={{@searchMode}}
-          @updateSearchMode={{@updateSearchMode}}
         >
+          <:searchMode>
+            {{yield to="searchMode"}}
+          </:searchMode>
           <:sortBy>
             {{yield to="sortBy"}}
           </:sortBy>

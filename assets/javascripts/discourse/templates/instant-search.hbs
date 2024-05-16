@@ -1,89 +1,65 @@
-{{#if (eq this.searchType "topics")}}
-  <SearchContainer
-    @apiData={{this.apiData}}
-    @instantSearch={{this.instantSearch}}
-    @searchType={{this.searchType}}
-    @searchParameters={{this.searchParameters}}
-    @updateQuery={{this.updateQuery}}
-    @query={{this.query}}
+{{#if (eq this.searchMode "keyword")}}
+  <SearchWrapper
+    @model={{this.model}}
     @searchMode={{this.searchMode}}
-    @searchModes={{this.searchModes}}
-    @updateSearchMode={{this.updateSearchMode}}
-    @categoriesList={{this.categoriesList}}
-  >
-    <:sortBy>
-      <ComboBox
-        class="search-types"
-        @valueProperty="value"
-        @content={{this.searchTypes}}
-        @value={{this.searchType}}
-      />
-    </:sortBy>
-  </SearchContainer>
-{{else if (eq this.searchType "posts")}}
-  <SearchContainer
-    @apiData={{this.apiData}}
-    @instantSearch={{this.instantSearch}}
-    @searchType={{this.searchType}}
     @searchParameters={{this.searchParameters}}
-    @updateQuery={{this.updateQuery}}
-    @query={{this.query}}
-    @searchMode={{this.searchMode}}
-    @searchModes={{this.searchModes}}
-    @updateSearchMode={{this.updateSearchMode}}
-    @categoriesList={{this.categoriesList}}
   >
-    <:sortBy>
+    <:searchMode>
       <ComboBox
-        class="search-types"
+        class="instant-search-modes__input"
         @valueProperty="value"
-        @content={{this.searchTypes}}
-        @value={{this.searchType}}
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
       />
-    </:sortBy>
-  </SearchContainer>
-{{else if (eq this.searchType "chat_messages")}}
-  <SearchContainer
-    @apiData={{this.apiData}}
-    @instantSearch={{this.instantSearch}}
-    @searchType={{this.searchType}}
+    </:searchMode>
+  </SearchWrapper>
+{{else if (eq this.searchMode "hybrid")}}
+  <SearchWrapper
+    @model={{this.model}}
+    @searchMode={{this.searchMode}}
     @searchParameters={{this.searchParameters}}
-    @updateQuery={{this.updateQuery}}
-    @query={{this.query}}
-    @searchMode={{this.searchMode}}
-    @searchModes={{this.searchModes}}
-    @updateSearchMode={{this.updateSearchMode}}
-    @categoriesList={{this.categoriesList}}
   >
-    <:sortBy>
+    <:searchMode>
       <ComboBox
-        class="search-types"
+        class="instant-search-modes__input"
         @valueProperty="value"
-        @content={{this.searchTypes}}
-        @value={{this.searchType}}
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
       />
-    </:sortBy>
-  </SearchContainer>
-{{else if (eq this.searchType "users")}}
-  <SearchContainer
-    @apiData={{this.apiData}}
-    @instantSearch={{this.instantSearch}}
-    @searchType={{this.searchType}}
+    </:searchMode>
+  </SearchWrapper>
+{{else if (eq this.searchMode "semantic")}}
+  <SearchWrapper
+    @model={{this.model}}
+    @searchMode={{this.searchMode}}
     @searchParameters={{this.searchParameters}}
-    @updateQuery={{this.updateQuery}}
-    @query={{this.query}}
-    @searchMode={{this.searchMode}}
-    @searchModes={{this.searchModes}}
-    @updateSearchMode={{this.updateSearchMode}}
-    @categoriesList={{this.categoriesList}}
   >
-    <:sortBy>
+    <:searchMode>
       <ComboBox
-        class="search-types"
+        class="instant-search-modes__input"
         @valueProperty="value"
-        @content={{this.searchTypes}}
-        @value={{this.searchType}}
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
       />
-    </:sortBy>
-  </SearchContainer>
+    </:searchMode>
+  </SearchWrapper>
+{{else if (eq this.searchMode "hyde")}}
+  <SearchWrapper
+    @model={{this.model}}
+    @searchMode={{this.searchMode}}
+    @searchParameters={{this.searchParameters}}
+  >
+    <:searchMode>
+      <ComboBox
+        class="instant-search-modes__input"
+        @valueProperty="value"
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
+      />
+    </:searchMode>
+  </SearchWrapper>
 {{/if}}

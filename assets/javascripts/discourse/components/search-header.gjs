@@ -132,25 +132,12 @@ export default class SearchHeader extends Component {
     this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
-  @action
-  changeSearchMode(newSearchMode) {
-    this.args.updateSearchMode(newSearchMode);
-
-    if (this.args.query?.length > 0) {
-      this.dInstantSearch.helper.search();
-    }
-  }
-
   <template>
     <div class="search-header" role="search">
       <h1 class="search-page-heading">
-        <ComboBox
-          class="instant-search-modes__input"
-          @valueProperty="value"
-          @content={{@searchModes}}
-          @value={{@searchMode}}
-          @onChange={{this.changeSearchMode}}
-        />
+        <div class="instant-search-mode">
+          {{yield to="searchMode"}}
+        </div>
 
         {{#if @query}}
           <span class="search-page-heading__stats">
