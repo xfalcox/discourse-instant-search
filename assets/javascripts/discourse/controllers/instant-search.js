@@ -91,6 +91,33 @@ export default class InstantSearch extends Controller {
           facet_by: "author_username,channel_name",
         },
       };
+    } else if (newSearchMode === SEARCH_MODES.keyword) {
+      this.searchParameters = {
+        posts: {
+          query_by: "raw,topic_title",
+          query_by_weights: "3,1",
+          exclude_fields: "embeddings",
+          facet_by:
+            "author_username,category,tags,type,allowed_users,allowed_groups",
+          sort_by: `_text_match(buckets: 20):desc,${this.categoryWeights}`,
+        },
+        topics: {
+          query_by: "title,blurb",
+          exclude_fields: "embeddings",
+          facet_by:
+            "author_username,category,tags,type,allowed_users,allowed_groups",
+          sort_by: `_text_match(buckets: 10):desc,${this.categoryWeights}`,
+        },
+        users: {
+          query_by: "username,name",
+          facet_by: "trust_level,groups",
+          sort_by: "_text_match:desc,trust_level:desc,likes_received:desc",
+        },
+        chat_messages: {
+          query_by: "raw",
+          facet_by: "author_username,channel_name",
+        },
+      };
     }
   }
 }
