@@ -74,7 +74,7 @@ export default class SearchWrapper extends Component {
   }
 
   <template>
-    {{#if (eq this.searchType "topics")}}
+    {{#if (eq this.searchType SEARCH_TYPES.topics)}}
       <SearchContainer
         @apiData={{this.apiData}}
         @instantSearch={{this.instantSearch}}
@@ -95,7 +95,7 @@ export default class SearchWrapper extends Component {
           />
         </:sortBy>
       </SearchContainer>
-    {{else if (eq this.searchType "posts")}}
+    {{else if (eq this.searchType SEARCH_TYPES.posts)}}
       <SearchContainer
         @apiData={{this.apiData}}
         @instantSearch={{this.instantSearch}}
@@ -116,7 +116,7 @@ export default class SearchWrapper extends Component {
           />
         </:sortBy>
       </SearchContainer>
-    {{else if (eq this.searchType "chat_messages")}}
+    {{else if (eq this.searchType SEARCH_TYPES.chat_messages)}}
       <SearchContainer
         @apiData={{this.apiData}}
         @instantSearch={{this.instantSearch}}
@@ -137,7 +137,7 @@ export default class SearchWrapper extends Component {
           />
         </:sortBy>
       </SearchContainer>
-    {{else if (eq this.searchType "users")}}
+    {{else if (eq this.searchType SEARCH_TYPES.users)}}
       <SearchContainer
         @apiData={{this.apiData}}
         @instantSearch={{this.instantSearch}}
