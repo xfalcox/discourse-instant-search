@@ -8,6 +8,7 @@ import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import discourseDebounce from "discourse-common/lib/debounce";
 import { bind } from "discourse-common/utils/decorators";
+import { SEARCH_MODES, SEARCH_TYPES } from "../lib/constants";
 import SearchHeader from "./search-header";
 import SearchResults from "./search-results";
 
@@ -57,7 +58,7 @@ export default class SearchContainer extends Component {
         type: "POST",
         data: JSON.stringify({
           search_query: helper.getQuery().query,
-          hyde: this.args.searchMode === "hyde",
+          hyde: this.args.searchMode === SEARCH_MODES.hyde,
         }),
         contentType: "application/json",
       }).then((response) => {
@@ -66,8 +67,8 @@ export default class SearchContainer extends Component {
       });
 
       if (
-        this.args.searchMode === "semantic" ||
-        this.args.searchMode === "hyde"
+        this.args.searchMode === SEARCH_MODES.semantic ||
+        this.args.searchMode === SEARCH_MODES.hyde
       ) {
         helper
           .setQueryParameter(
@@ -94,9 +95,9 @@ export default class SearchContainer extends Component {
     const helper = this.dInstantSearch.searchInstance.helper;
 
     if (
-      this.args.searchMode === "keyword" ||
-      this.args.searchType === "user" ||
-      this.args.searchType === "chat_message"
+      this.args.searchMode === SEARCH_MODES.keyword ||
+      this.args.searchType === SEARCH_TYPES.users ||
+      this.args.searchType === SEARCH_TYPES.chat_messages
     ) {
       helper.setQueryParameter("typesenseVectorQuery", null);
       return setUiState(uiState);

@@ -2,11 +2,12 @@ import { tracked } from "@glimmer/tracking";
 import Controller from "@ember/controller";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
+import { SEARCH_MODES } from "../lib/constants";
 
 export default class InstantSearch extends Controller {
   @service dInstantSearch;
   @tracked categoryWeights = this.model.categories;
-  @tracked searchMode = "keyword";
+  @tracked searchMode = SEARCH_MODES.keyword;
   @tracked
   searchParameters = {
     posts: {
@@ -39,19 +40,19 @@ export default class InstantSearch extends Controller {
     return [
       {
         label: "Keyword Search",
-        value: "keyword",
+        value: SEARCH_MODES.keyword,
       },
       {
         label: "Hybrid Search",
-        value: "hybrid",
+        value: SEARCH_MODES.hybrid,
       },
       {
         label: "Semantic Search",
-        value: "semantic",
+        value: SEARCH_MODES.semantic,
       },
       {
         label: "Hyde Search",
-        value: "hyde",
+        value: SEARCH_MODES.hyde,
       },
     ];
   }
@@ -63,7 +64,10 @@ export default class InstantSearch extends Controller {
       this.dInstantSearch.helper.search();
     }
 
-    if (newSearchMode === "semantic" || newSearchMode === "hyde") {
+    if (
+      newSearchMode === SEARCH_MODES.semantic ||
+      newSearchMode === SEARCH_MODES.hyde
+    ) {
       this.searchParameters = {
         posts: {
           query_by: "raw,topic_title",

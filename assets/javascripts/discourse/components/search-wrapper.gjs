@@ -4,6 +4,7 @@ import { inject as service } from "@ember/service";
 import { eq } from "truth-helpers";
 import loadInstantSearch from "discourse/lib/load-instant-search";
 import ComboBox from "select-kit/components/combo-box";
+import { SEARCH_TYPES } from "../lib/constants";
 import SearchContainer from "./search-container";
 
 export default class SearchWrapper extends Component {
@@ -23,19 +24,19 @@ export default class SearchWrapper extends Component {
     return [
       {
         label: "Topics",
-        value: "topics",
+        value: SEARCH_TYPES.topics,
       },
       {
         label: "Posts",
-        value: "posts",
+        value: SEARCH_TYPES.posts,
       },
       {
         label: "Chat Messages",
-        value: "chat_messages",
+        value: SEARCH_TYPES.chat_messages,
       },
       {
         label: "Users",
-        value: "users",
+        value: SEARCH_TYPES.users,
       },
     ];
   }

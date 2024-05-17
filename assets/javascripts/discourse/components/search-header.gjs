@@ -7,6 +7,7 @@ import DButton from "discourse/components/d-button";
 import i18n from "discourse-common/helpers/i18n";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import I18n from "discourse-i18n";
+import { SEARCH_TYPES } from "../lib/constants";
 
 export default class SearchHeader extends Component {
   @service dInstantSearch;
@@ -77,7 +78,8 @@ export default class SearchHeader extends Component {
 
   get showTypeRefinementList() {
     return (
-      this.args.searchType === "topics" || this.args.searchType === "posts"
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
     );
   }
 
@@ -90,39 +92,45 @@ export default class SearchHeader extends Component {
       return false;
     }
     return (
-      this.args.searchType === "topics" || this.args.searchType === "posts"
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
     );
   }
 
   get showUserRefinementList() {
     return (
-      this.args.searchType === "topics" ||
-      this.args.searchType === "posts" ||
-      this.args.searchType === "chat_messages"
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts ||
+      this.args.searchType === SEARCH_TYPES.chat_messages
     );
   }
 
   get showTagRefinementList() {
     return (
-      this.args.searchType === "topics" || this.args.searchType === "posts"
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
     );
   }
 
   get showTrustRefinementList() {
-    return this.args.searchType === "users";
+    return this.args.searchType === SEARCH_TYPES.users;
   }
 
   get showGroupRefinementList() {
-    return this.args.searchType === "users";
+    return this.args.searchType === SEARCH_TYPES.users;
   }
 
   get showAdvancedFiltersButton() {
+    if (this.showAdvancedFilters) {
+      return true;
+    }
     return this.dInstantSearch.query?.length > 0;
   }
 
   get showAllowedUsersAndGroupsList() {
     return (
-      this.args.searchType === "topics" || this.args.searchType === "posts"
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
     );
   }
 
