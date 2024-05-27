@@ -22,9 +22,9 @@ task "instant_search:index", %i[concurrency] => [:environment] do |_, args|
     client = InstantSearch::Engines::Typesense.client
     lowest_hits =
       client.collections[collection.collection].documents.search(
-        { q: "*", sort_by: "created_at:asc" },
+        { q: "*", sort_by: "created_at:asc", per_page: 250 },
       )
-    lowest_id = lowest_hits.dig("hits", 0, "document", "id")
+    lowest_id = lowest_hits.dig("hits").map { _1.dig("document", "id").to_i }.min
 
     Thread.new do
       col = collection.model
