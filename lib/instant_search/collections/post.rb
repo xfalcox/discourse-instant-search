@@ -60,6 +60,7 @@ module ::InstantSearch::Collections
     def should_index?
       return false if @object.deleted_at.present?
       return false unless @object.topic.present?
+      return false if @object.topic.deleted_at.present?
 
       return true if SiteSetting.index_private_content
       return false if @object&.topic&.category&.read_restricted?
@@ -71,18 +72,19 @@ module ::InstantSearch::Collections
     def security
       return SiteSetting.whispers_allowed_groups_map.map { "g#{_1}" } if @object.whisper?
 
-      if @object.topic.archetype == Archetype.private_message
-        # hack
-        if @object.topic.tags.present? && @object.topic.tags.any? { |t| t.tag_groups.present? } &&
-             @object.topic.tags.any? { |t|
-               t.tag_groups.any? do |tg|
-                 tg.tag_group_permissions.any? do |tgp|
-                   tgp.permission_type == 1 && tgp.group_id == 47
-                 end
+      # hack
+      if @object.topic.tags.present? && @object.topic.tags.any? { |t| t.tag_groups.present? } &&
+           @object.topic.tags.any? { |t|
+             t.tag_groups.any? do |tg|
+               tg.tag_group_permissions.any? do |tgp|
+                 tgp.permission_type == 1 && tgp.group_id == 47
                end
-             }
-          return ["g47"]
-        end
+             end
+           }
+        return ["g47"]
+      end
+
+      if @object.topic.archetype == Archetype.private_message
         group_ids = @object.topic.allowed_groups.pluck(:id).map { "g#{_1}" }
         user_ids = @object.topic.allowed_users.pluck(:id).filter { _1 > 0 }.map { "u#{_1}" }
         group_ids + user_ids

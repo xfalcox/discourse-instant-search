@@ -75,18 +75,19 @@ module ::InstantSearch::Collections
     end
 
     def security
-      if @object.archetype == Archetype.private_message
-        # hack
-        if @object.tags.present? && @object.tags.any? { |t| t.tag_groups.present? } &&
-             @object.tags.any? { |t|
-               t.tag_groups.any? do |tg|
-                 tg.tag_group_permissions.any? do |tgp|
-                   tgp.permission_type == 1 && tgp.group_id == 47
-                 end
+      # hack
+      if @object.tags.present? && @object.tags.any? { |t| t.tag_groups.present? } &&
+           @object.tags.any? { |t|
+             t.tag_groups.any? do |tg|
+               tg.tag_group_permissions.any? do |tgp|
+                 tgp.permission_type == 1 && tgp.group_id == 47
                end
-             }
-          return ["g47"]
-        end
+             end
+           }
+        return ["g47"]
+      end
+
+      if @object.archetype == Archetype.private_message
         group_ids = @object.allowed_groups.pluck(:id).map { "g#{_1}" }
         user_ids = @object.allowed_users.pluck(:id).filter { _1 > 0 }.map { "u#{_1}" }
         group_ids + user_ids
