@@ -9,7 +9,7 @@ module Jobs
       type = "::InstantSearch::Collections::#{args[:type]}".constantize
       object = type.model.find_by(id: id)
 
-      return unless object.present?
+      return if object.blank?
 
       case args[:action]
       when "upsert"
