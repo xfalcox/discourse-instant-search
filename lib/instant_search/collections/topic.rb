@@ -87,6 +87,9 @@ module ::InstantSearch::Collections
         return ["g47"]
       end
 
+      # Handles unlisted topics
+      return ["g3"] unless @object.visible
+
       if @object.archetype == Archetype.private_message
         group_ids = @object.allowed_groups.pluck(:id).map { "g#{_1}" }
         user_ids = @object.allowed_users.pluck(:id).filter { _1 > 0 }.map { "u#{_1}" }
