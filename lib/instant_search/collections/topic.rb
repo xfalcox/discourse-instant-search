@@ -78,11 +78,7 @@ module ::InstantSearch::Collections
       # hack
       if @object.tags.present? && @object.tags.any? { |t| t.tag_groups.present? } &&
            @object.tags.any? { |t|
-             t.tag_groups.any? do |tg|
-               tg.tag_group_permissions.any? do |tgp|
-                 tgp.permission_type == 1 && tgp.group_id == 47
-               end
-             end
+             t.tag_groups.any? { |tg| tg.tag_group_permissions.none? { |tgp| tgp.group_id == 0 } }
            }
         return ["g47"]
       end

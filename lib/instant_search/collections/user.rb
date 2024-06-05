@@ -25,6 +25,11 @@ module ::InstantSearch::Collections
     end
 
     def should_index?
+      #return false if @object.suspended?
+      return false if @object.staged?
+      #return false if @object.blocked?
+      return false if @object.anonymous?
+      return false if @object.deleted_at.present?
       true
     end
 
