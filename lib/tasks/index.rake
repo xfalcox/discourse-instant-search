@@ -13,23 +13,46 @@ end
 task "instant_search:index", %i[concurrency] => [:environment] do |_, args|
   load!
   InstantSearch::Collections::Base.subclasses.each do |collection|
-    puts "### Indexing #{collection.class_name}"
+    puts "### Indexing #{collection.name}"
     i = 0
     total = collection.model.count
     queue = SizedQueue.new(50)
+    concurrency = args[:concurrency].to_i
+    end_object = Object.new
+    client = InstantSearch::Engines::Typesense.client
+    lowest_hits =
+      client.collections[collection.collection].documents.search(
+        { q: "*", sort_by: "created_at:asc", per_page: 250 },
+      )
+    lowest_id = lowest_hits.dig("hits").map { _1.dig("document", "id").to_i }.min
+
     Thread.new do
-      collection.model.find_in_batches { |batch| batch.each { |object| queue.push object } }
-      queue.push Parallel::Stop
+      col = collection.model
+      col = col.where("id < ?", lowest_id) if lowest_id.present?
+      col.find_in_batches(order: :desc) { |batch| batch.each { |object| queue.push object } }
+      concurrency.times { queue.push end_object }
     end
 
-    Parallel.each(-> { queue.pop }, in_processes: args[:concurrency].to_i) do |item|
-      ActiveRecord::Base.connection_pool.with_connection do
-        collection.new(item).create
-        i += 1
-        print "### Indexed #{i * 100 * args[:concurrency].to_i / total}% of #{collection.class_name}          \r"
+    consumers =
+      concurrency.times.map do
+        Thread.new do
+          until (item = queue.pop) == end_object
+            ActiveRecord::Base.connection_pool.with_connection do
+              begin
+                collection.new(item).create
+              rescue StandardError => e
+                puts "### Error indexing #{item.class.name} #{item.id}: #{e.message}"
+              end
+              i += 1
+              print "### Indexed #{i * 100 / total}% of #{collection.name}          \r"
+            end
+          end
+        end
       end
-    end
-    puts "### Indexed #{collection.class_name} done                      "
+
+    consumers.each(&:join)
+
+    puts "### Indexed #{collection.name} done                      "
   end
 end
 

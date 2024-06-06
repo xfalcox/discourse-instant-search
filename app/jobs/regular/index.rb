@@ -6,7 +6,7 @@ module Jobs
 
     def execute(args)
       id = args[:id]
-      type = "::InstantSearch::Collections::#{args[:type]}".constantize
+      type = args[:type].constantize
       object = type.model.find_by(id: id)
 
       return if object.blank?

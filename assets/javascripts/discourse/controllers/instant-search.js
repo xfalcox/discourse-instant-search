@@ -1,118 +1,123 @@
 import { tracked } from "@glimmer/tracking";
 import Controller from "@ember/controller";
-import { inject as service } from "@ember/service";
-import loadInstantSearch from "discourse/lib/load-instant-search";
+import { action } from "@ember/object";
+import { service } from "@ember/service";
+import { SEARCH_MODES } from "../lib/constants";
 
 export default class InstantSearch extends Controller {
-  @service siteSettings;
-  @tracked instantSearchModule;
-  @tracked searchType = "topics";
-  @tracked query = "";
-  @tracked apiKey = this.model.api_key;
+  @service dInstantSearch;
+  @tracked categoryWeights = this.model.categories;
+  @tracked searchMode = SEARCH_MODES.keyword;
+  @tracked
+  searchParameters = {
+    posts: {
+      query_by: "raw,topic_title",
+      query_by_weights: "3,1",
+      exclude_fields: "embeddings",
+      facet_by:
+        "author_username,category,tags,type,allowed_users,allowed_groups",
+      sort_by: `_text_match(buckets: 20):desc,${this.categoryWeights}`,
+    },
+    topics: {
+      query_by: "title,blurb",
+      exclude_fields: "embeddings",
+      facet_by:
+        "author_username,category,tags,type,allowed_users,allowed_groups",
+      sort_by: `_text_match(buckets: 10):desc,${this.categoryWeights}`,
+    },
+    users: {
+      query_by: "username,name",
+      facet_by: "trust_level,groups",
+      sort_by: "_text_match:desc,trust_level:desc,likes_received:desc",
+    },
+    chat_messages: {
+      query_by: "raw",
+      facet_by: "author_username,channel_name",
+    },
+  };
 
-  constructor() {
-    super(...arguments);
-    this.loadInstantSearch();
-  }
-
-  get customMiddleware() {
-    const context = this;
+  get searchModes() {
     return [
-      () => ({
-        onStateChange({ uiState }) {
-          const { topics } = uiState;
-          const { sortBy } = topics;
-
-          if (topics?.query) {
-            context.query = topics.query;
-          }
-
-          switch (sortBy) {
-            case "posts":
-              context.searchType = "posts";
-              break;
-            case "topics":
-              context.searchType = "topics";
-              break;
-            case "chat_messages":
-              context.searchType = "chat_messages";
-              break;
-            case "users":
-              context.searchType = "users";
-              break;
-            default:
-              context.searchType = "topics";
-          }
-        },
-        subscribe() {},
-        unsubscribe() {},
-      }),
+      {
+        label: "Keyword Search",
+        value: SEARCH_MODES.keyword,
+      },
+      {
+        label: "Hybrid Search",
+        value: SEARCH_MODES.hybrid,
+      },
+      {
+        label: "Semantic Search",
+        value: SEARCH_MODES.semantic,
+      },
+      {
+        label: "Hyde Search",
+        value: SEARCH_MODES.hyde,
+      },
     ];
   }
 
-  get apiData() {
-    let indexes = {
-      posts: {
-        query_by: "topic_title,cooked",
-        query_by_weights: "2,1",
-        exclude_fields: "embeddings",
-        facet_by: "author_username,category,tags",
-      },
-      topics: {
-        query_by: "title,blurb",
-        exclude_fields: "embeddings",
-        facet_by: "author_username,category",
-      },
-      users: {
-        query_by: "username,name",
-        facet_by: "groups",
-      },
-      chat_messages: {
-        query_by: "cooked",
-        facet_by: "author_username,channel_name",
-      },
-    };
-    const typesenseNodes = JSON.parse(this.siteSettings.typesense_nodes);
+  @action
+  changeSearchMode(newSearchMode) {
+    this.searchMode = newSearchMode;
+    if (this.dInstantSearch.query?.length > 0) {
+      this.dInstantSearch.helper.search();
+    }
 
-    return {
-      apiKey: this.apiKey,
-      port: typesenseNodes[0].port,
-      host: typesenseNodes[0].host,
-      protocol: typesenseNodes[0].protocol,
-      indexName: this.searchType,
-      queryBy: indexes[this.searchType].query_by,
-    };
-  }
-
-  get searchParameters() {
-    return {
-      posts: {
-        query_by: "topic_title,cooked",
-        query_by_weights: "2,1",
-        exclude_fields: "embeddings",
-        facet_by: "author_username,category,tags",
-      },
-      topics: {
-        query_by: "title,blurb",
-        exclude_fields: "embeddings",
-        facet_by: "author_username,category",
-      },
-      users: {
-        query_by: "username,name",
-        facet_by: "groups",
-      },
-      chat_messages: {
-        query_by: "cooked",
-        facet_by: "author_username,channel_name",
-      },
-    };
-  }
-
-  async loadInstantSearch() {
-    this.instantSearchModule = await loadInstantSearch();
-  }
-
-  get instantSearch() {
-    return this.instantSearchModule;
+    if (
+      newSearchMode === SEARCH_MODES.semantic ||
+      newSearchMode === SEARCH_MODES.hyde
+    ) {
+      this.searchParameters = {
+        posts: {
+          query_by: "raw,topic_title",
+          query_by_weights: "3,1",
+          exclude_fields: "embeddings",
+          facet_by:
+            "author_username,category,tags,type,allowed_users,allowed_groups",
+        },
+        topics: {
+          query_by: "title,blurb",
+          exclude_fields: "embeddings",
+          facet_by:
+            "author_username,category,tags,type,allowed_users,allowed_groups",
+        },
+        users: {
+          query_by: "username,name",
+          facet_by: "trust_level,groups",
+        },
+        chat_messages: {
+          query_by: "raw",
+          facet_by: "author_username,channel_name",
+        },
+      };
+    } else if (newSearchMode === SEARCH_MODES.keyword) {
+      this.searchParameters = {
+        posts: {
+          query_by: "raw,topic_title",
+          query_by_weights: "3,1",
+          exclude_fields: "embeddings",
+          facet_by:
+            "author_username,category,tags,type,allowed_users,allowed_groups",
+          sort_by: `_text_match(buckets: 20):desc,${this.categoryWeights}`,
+        },
+        topics: {
+          query_by: "title,blurb",
+          exclude_fields: "embeddings",
+          facet_by:
+            "author_username,category,tags,type,allowed_users,allowed_groups",
+          sort_by: `_text_match(buckets: 10):desc,${this.categoryWeights}`,
+        },
+        users: {
+          query_by: "username,name",
+          facet_by: "trust_level,groups",
+          sort_by: "_text_match:desc,trust_level:desc,likes_received:desc",
+        },
+        chat_messages: {
+          query_by: "raw",
+          facet_by: "author_username,channel_name",
+        },
+      };
+    }
   }
 }

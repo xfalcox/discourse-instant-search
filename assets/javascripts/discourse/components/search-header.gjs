@@ -1,14 +1,24 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { hash } from "@ember/helper";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
+import { modifier } from "ember-modifier";
 import DButton from "discourse/components/d-button";
 import i18n from "discourse-common/helpers/i18n";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import I18n from "discourse-i18n";
+import { SEARCH_TYPES } from "../lib/constants";
 
 export default class SearchHeader extends Component {
+  @service dInstantSearch;
   @tracked showAdvancedFilters = false;
+
+  prefillQuery = modifier(() => {
+    // Should keep previous query when switching sort modes:
+    if (this.dInstantSearch.query?.length > 0) {
+      this.args.searchInstance.helper.setQuery(this.dInstantSearch.query);
+    }
+  });
 
   get searchBoxClasses() {
     return {
@@ -16,15 +26,6 @@ export default class SearchHeader extends Component {
       reset: ["btn", "btn-icon", "no-text"],
       input: ["search", "search-query"],
     };
-  }
-
-  get searchTypes() {
-    return [
-      { label: "Topics", value: "topics" },
-      { label: "Posts", value: "posts" },
-      { label: "Chat Messages", value: "chat_messages" },
-      { label: "Users", value: "users" },
-    ];
   }
 
   get searchBoxTemplate() {
@@ -75,6 +76,64 @@ export default class SearchHeader extends Component {
     };
   }
 
+  get showTypeRefinementList() {
+    return (
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
+    );
+  }
+
+  get showCategoryRefinementList() {
+    const typeRefinements = this.dInstantSearch.helper
+      .getRefinements("type")
+      .map(({ value }) => value);
+
+    if (typeRefinements.includes("private_message")) {
+      return false;
+    }
+    return (
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
+    );
+  }
+
+  get showUserRefinementList() {
+    return (
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts ||
+      this.args.searchType === SEARCH_TYPES.chat_messages
+    );
+  }
+
+  get showTagRefinementList() {
+    return (
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
+    );
+  }
+
+  get showTrustRefinementList() {
+    return this.args.searchType === SEARCH_TYPES.users;
+  }
+
+  get showGroupRefinementList() {
+    return this.args.searchType === SEARCH_TYPES.users;
+  }
+
+  get showAdvancedFiltersButton() {
+    if (this.showAdvancedFilters) {
+      return true;
+    }
+    return this.dInstantSearch.query?.length > 0;
+  }
+
+  get showAllowedUsersAndGroupsList() {
+    return (
+      this.args.searchType === SEARCH_TYPES.topics ||
+      this.args.searchType === SEARCH_TYPES.posts
+    );
+  }
+
   @action
   toggleAdvancedFilters() {
     this.showAdvancedFilters = !this.showAdvancedFilters;
@@ -83,9 +142,17 @@ export default class SearchHeader extends Component {
   <template>
     <div class="search-header" role="search">
       <h1 class="search-page-heading">
-        <@instantSearch.AisStats @searchInstance={{@searchInstance}} />
+        <div class="instant-search-mode">
+          {{yield to="searchMode"}}
+        </div>
+
+        {{#if this.dInstantSearch.query}}
+          <span class="search-page-heading__stats">
+            <@instantSearch.AisStats @searchInstance={{@searchInstance}} />
+          </span>
+        {{/if}}
       </h1>
-      <div class="search-bar">
+      <div class="search-bar" {{this.prefillQuery}}>
         <@instantSearch.AisSearchBox
           @placeholder={{i18n "search.title"}}
           @autofocus={{true}}
@@ -97,51 +164,118 @@ export default class SearchHeader extends Component {
         />
 
         <div class="instant-search-filters">
-          <@instantSearch.AisHitsPerPage
-            @searchInstance={{@searchInstance}}
-            @items={{this.hitsPerPageItems}}
-            @cssClasses={{hash root="hits-per-page d-input"}}
-          />
-
-          <@instantSearch.AisSortBy
-            @searchInstance={{@searchInstance}}
-            @items={{this.searchTypes}}
-            @cssClasses={{hash root="sort-by inline-form d-input"}}
-          />
+          {{yield to="sortBy"}}
         </div>
+
       </div>
 
-      <DButton
-        @label="search.advanced.title"
-        @icon="cog"
-        @action={{this.toggleAdvancedFilters}}
-      />
+      {{#if this.showAdvancedFiltersButton}}
+        <DButton
+          @label="search.advanced.title"
+          @icon="cog"
+          @action={{this.toggleAdvancedFilters}}
+        />
+      {{/if}}
 
       {{#if this.showAdvancedFilters}}
         <div class="instant-search-refinements">
-          <@instantSearch.AisRefinementList
-            @searchInstance={{@searchInstance}}
-            @attribute="category"
-            @showMore={{false}}
-            @searchable={{true}}
-            @searchablePlaceholder="Search for categories"
-            @cssClasses={{this.refinementListClasses}}
-            @templates={{this.refinementListTemplate}}
-            @rootClass="refinement-list-container"
-          />
-          <@instantSearch.AisRefinementList
-            @searchInstance={{@searchInstance}}
-            @attribute="author_username"
-            @showMore={{false}}
-            @searchable={{true}}
-            @searchablePlaceholder="Search for users"
-            @cssClasses={{this.refinementListClasses}}
-            @templates={{this.refinementListTemplate}}
-            @rootClass="refinement-list-container"
-          />
+          {{#if this.showTypeRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="type"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for type"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container type-refinment"
+            />
+          {{/if}}
+          {{#if this.showCategoryRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="category"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for categories"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container category-refinement"
+            />
+          {{/if}}
+          {{#if this.showUserRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="author_username"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for users"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container user-refinement"
+            />
+          {{/if}}
+          {{#if this.showTagRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="tags"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for tags"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container tag-refinement"
+            />
+          {{/if}}
+          {{#if this.showTrustRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="trust_level"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for Trust Levels"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container trust-level-refinement"
+            />
+          {{/if}}
+          {{#if this.showGroupRefinementList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="groups"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Search for Groups"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container group-refinement"
+            />
+          {{/if}}
+
+          {{#if this.showAllowedUsersAndGroupsList}}
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="allowed_users"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Filter to a PM recipient"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container allowed-users-refinement"
+            />
+            <@instantSearch.AisRefinementList
+              @searchInstance={{@searchInstance}}
+              @attribute="allowed_groups"
+              @showMore={{false}}
+              @searchable={{true}}
+              @searchablePlaceholder="Filter to an inbox"
+              @cssClasses={{this.refinementListClasses}}
+              @templates={{this.refinementListTemplate}}
+              @rootClass="refinement-list-container allowed-groups-refinement"
+            />
+          {{/if}}
         </div>
       {{/if}}
-
     </div>
   </template>
 }

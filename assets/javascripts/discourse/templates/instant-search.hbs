@@ -1,30 +1,65 @@
-{{#if this.instantSearchModule}}
-  <this.instantSearch.AisInstantSearch
-    @apiData={{this.apiData}}
-    @middleware={{this.customMiddleware}}
-    @onStateChange={{this.onStateChange}}
-    @collectionSpecificSearchParameters={{this.searchParameters}}
-    as |Ais|
+{{#if (eq this.searchMode "keyword")}}
+  <SearchWrapper
+    @model={{this.model}}
+    @searchMode={{this.searchMode}}
+    @searchParameters={{this.searchParameters}}
   >
-    <section class="search-container instant-search-container">
-      <SearchHeader
-        @instantSearch={{this.instantSearch}}
-        @searchInstance={{Ais.searchInstance}}
+    <:searchMode>
+      <ComboBox
+        class="instant-search-modes__input"
+        @valueProperty="value"
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
       />
-
-      <div class="search-advanced">
-        <div class="search-info" role="region">
-
-        </div>
-
-        <SearchResults
-          @instantSearch={{this.instantSearch}}
-          @searchInstance={{Ais.searchInstance}}
-          @searchType={{this.searchType}}
-        />
-      </div>
-    </section>
-  </this.instantSearch.AisInstantSearch>
-{{else}}
-  Loading instantsearch...
+    </:searchMode>
+  </SearchWrapper>
+{{else if (eq this.searchMode "hybrid")}}
+  <SearchWrapper
+    @model={{this.model}}
+    @searchMode={{this.searchMode}}
+    @searchParameters={{this.searchParameters}}
+  >
+    <:searchMode>
+      <ComboBox
+        class="instant-search-modes__input"
+        @valueProperty="value"
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
+      />
+    </:searchMode>
+  </SearchWrapper>
+{{else if (eq this.searchMode "semantic")}}
+  <SearchWrapper
+    @model={{this.model}}
+    @searchMode={{this.searchMode}}
+    @searchParameters={{this.searchParameters}}
+  >
+    <:searchMode>
+      <ComboBox
+        class="instant-search-modes__input"
+        @valueProperty="value"
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
+      />
+    </:searchMode>
+  </SearchWrapper>
+{{else if (eq this.searchMode "hyde")}}
+  <SearchWrapper
+    @model={{this.model}}
+    @searchMode={{this.searchMode}}
+    @searchParameters={{this.searchParameters}}
+  >
+    <:searchMode>
+      <ComboBox
+        class="instant-search-modes__input"
+        @valueProperty="value"
+        @content={{this.searchModes}}
+        @value={{this.searchMode}}
+        @onChange={{this.changeSearchMode}}
+      />
+    </:searchMode>
+  </SearchWrapper>
 {{/if}}

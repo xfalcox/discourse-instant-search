@@ -15,3 +15,6 @@ discourse_instant_search:
     default: ""
   include_embeddings: false
   index_private_content: false
+  proxy_typesense_requests:
+    client: true
+    default: false

@@ -13,8 +13,12 @@ module ::InstantSearch::Collections
         { name: "views", type: "int32" },
         { name: "like_count", type: "int32" },
         { name: "participants", type: "string[]", facet: true },
+        { name: "type", type: "string", facet: true },
+        { name: "allowed_users", type: "string[]", facet: true, optional: true },
+        { name: "allowed_groups", type: "string[]", facet: true, optional: true },
         { name: "created_at", type: "int64" },
         { name: "updated_at", type: "int64" },
+        { name: "category_id", type: "int32", optional: true },
         { name: "category", type: "string", facet: true, optional: true },
         { name: "tags", type: "string[]", facet: true },
         { name: "closed", type: "bool", facet: true },
@@ -35,6 +39,8 @@ module ::InstantSearch::Collections
     end
 
     def should_index?
+      return false if @object.deleted_at.present?
+
       return true if SiteSetting.index_private_content
       return false if @object&.category&.read_restricted?
       return false if @object.archetype == Archetype.private_message
@@ -52,8 +58,12 @@ module ::InstantSearch::Collections
         views: @object.views,
         like_count: @object.like_count,
         participants: @object.posters_summary.map(&:user).map(&:username),
+        type: type,
+        allowed_users: @object.allowed_users.pluck(:username).compact,
+        allowed_groups: @object.allowed_groups.pluck(:name).compact,
         created_at: @object.created_at.to_i,
         updated_at: @object.updated_at.to_i,
+        category_id: @object&.category&.id,
         category: @object&.category&.name,
         tags: @object.tags.map(&:name),
         closed: @object.closed,
@@ -65,6 +75,17 @@ module ::InstantSearch::Collections
     end
 
     def security
+      # hack
+      if @object.tags.present? && @object.tags.any? { |t| t.tag_groups.present? } &&
+           @object.tags.any? { |t|
+             t.tag_groups.any? { |tg| tg.tag_group_permissions.none? { |tgp| tgp.group_id == 0 } }
+           }
+        return ["g47"]
+      end
+
+      # Handles unlisted topics
+      return ["g3"] unless @object.visible
+
       if @object.archetype == Archetype.private_message
         group_ids = @object.allowed_groups.pluck(:id).map { "g#{_1}" }
         user_ids = @object.allowed_users.pluck(:id).filter { _1 > 0 }.map { "u#{_1}" }
@@ -78,12 +99,16 @@ module ::InstantSearch::Collections
       end
     end
 
+    def type
+      @object.archetype
+    end
+
     def embeddings
       return [] unless SiteSetting.include_embeddings
       JSON.parse(
         DB
           .query_single(
-            "SELECT embeddings FROM ai_topic_embeddings_4_1 WHERE topic_id = ? LIMIT 1",
+            "SELECT embeddings FROM ai_topic_embeddings_8_1 WHERE topic_id = ? LIMIT 1",
             @object.id,
           )
           .first
